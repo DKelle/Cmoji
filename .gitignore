@@ -1,1 +1,5 @@
 *.class
+*.hex
+*.ok
+*.gtkw
+

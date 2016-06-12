@@ -1,6 +1,7 @@
 import java.io.*;
 import java.util.*;
-
+import java.nio.file.*;
+import java.nio.charset.*;
 
 public class preprocessor
 {
@@ -17,22 +18,25 @@ public class preprocessor
 	initHash();
         InputStreamReader isReader = new InputStreamReader(System.in);
         BufferedReader bufReader = new BufferedReader(isReader);
+	ArrayList<String> outfile = new ArrayList<String>();
 	boolean done = false;
 	byte[] utf8Bytes;
-	
+	int varnum = 0;	
+
         while(!done){
             try {
                 String inputStr;
                 if((inputStr=bufReader.readLine()) != null) {
-
-		    if(debug)
+		    for(String emoji : inputStr.split(" "))
 		    {
-                    	System.out.print("the string I read was: ");
-		    	System.out.println(inputStr);
-		    	System.out.println(escapeUnicode(inputStr));	
-		    	System.out.println("Translates to " + unicodeToKey.get(inputStr));
+			if(!unicodeToKey.containsKey(escapeUnicode(emoji)))
+			{
+			    unicodeToKey.put(escapeUnicode(emoji), "var"+varnum);
+			    varnum++;
+			}
+		        outfile.add(unicodeToKey.get(escapeUnicode(emoji)));
 		    }
-		    
+		    outfile.add("\n");
 		}
                 else {
 		    done = true;
@@ -42,6 +46,35 @@ public class preprocessor
 	    	e.printStackTrace();
 	    }
         }
+
+	if(debug)
+	{
+	    for(String str : outfile)
+	    {
+		System.out.println(str);
+	    }
+	}
+
+	createOutput(outfile);
+
+    }
+
+    public void createOutput(ArrayList<String> outfile)
+    {
+	FileWriter writer = null;
+	try
+	{
+	    writer = new FileWriter("preprocessed.txt"); 
+	    for(String str: outfile) {
+ 		 writer.write(str+" ");
+	    }
+	    writer.close();
+	}
+	catch(Exception e)
+	{
+	    System.out.println("Could not create preprocessed.txt");
+	    e.printStackTrace();
+	}
     }
 
     public String escapeUnicode(String input)
@@ -64,6 +97,7 @@ public class preprocessor
 
     public void initHash()
     {
+
 	unicodeToKey = new HashMap<String, String>();
 
         String fileName = "initmap.txt";
@@ -83,7 +117,7 @@ public class preprocessor
 		
 		if(debug) for(String s : lines) System.out.println(s);
 
-		unicodeToKey.put(lines[0], lines[1]);
+		unicodeToKey.put(escapeUnicode(lines[0]), lines[1]);
                 //System.out.println(line);
             }
 
