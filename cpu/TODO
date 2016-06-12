@@ -1,8 +1,0 @@
-make sure that you add /*~(ldu_1_next_is_src_0|ldu_1_next_is_src_1)*/ to each line when calculating disp destinations
-
-
-resercation_valid(x)? might need to be the last line
-    //figure out if our RS is valid. If not, see if we can forward the value here 
-    wire [67:0]fxu_1_entry = reservation_valid(fx_rs_1) ? fx_rs_1 :               
-                             dispatch_destination_0 == 4 ? rs_entry_0 :           
-                             dispatch_destination_1 == 4 ? rs_entry_1 : 0;        
