@@ -1,5 +1,5 @@
-🔁//loop
-🔂//loop1
+🔁 //loop
+🔂 //loop1
 0️⃣ //0
 1️⃣ //1
 2️⃣ //2
@@ -10,20 +10,21 @@
 7️⃣ //7
 8️⃣ //8
 9️⃣ //9
-👉//point
-🙅//mul
-👍//add
-👎//sub
-🖖//div
-🖨//print
-🤐//silence
-🗣//funcall
-≝//def
-👬//eq
-🌜//lparen
-🌛//rparen
-🤔//if
-👆//gt
-👇//lt
-🔙//ret
+👉 //point
+🙅 //mul
+👍 //add
+👎 //sub
+🖖 //div
+🖨 //print
+🤐 //silence
+🗣 //funcall
+≝ //def
+👬 //eq
+🌜 //lparen
+🌛 //rparen
+🤔 //if
+👆 //gt
+👇 //lt
+🔙 //ret
+
 
