@@ -6,3 +6,5 @@ testing/*
 compiler/*.class
 *.txt
 compiler/*.txt
+lex.yy.*
+lexer
