@@ -1,0 +1,51 @@
+This is a non C-like language written entirely in emojis. 
+This project is composed of two main parts: a compiler and a processor.
+
+The current mapping of Emoji -> keywords is as follows
+
+🔁//loop
+🔂//loop1
+0️//0
+1️//1
+2️//2
+3️//3
+4️//4
+5️//5
+6️//6
+7️//7
+8️//8
+9️//9
+👉//point
+🙅//mul
+👍//add
+👎//sub
+🖖//div
+🖨//print
+🤐//silence
+🗣//funcall
+≝//def
+👬//eq
+🌜//lparen
+🌛//rparen
+🤔//if
+👆//gt
+👇//lt
+🔙//ret
+
+All other emojis encountered will be compiled as variable names
+
+
+The instruction set for the virtual processor is as follows:
+ encoding          instruction   description
+
+ 0000iiiiiiiitttt  mov i,t       regs[t] = i; pc += 1;
+ 0001aaaabbbbtttt  add a,b,t     regs[t] = regs[a] + regs[b]; pc += 1;
+ 0010jjjjjjjjjjjj  jmp j         pc = j;
+ 0011000000000000  halt          <stop fetching instructions>
+ 0100iiiiiiiitttt  ld i,t        regs[t] = mem[i]; pc += 1;
+ 0101aaaabbbbtttt  ldr a,b,t     regs[t] = mem[regs[a]+regs[b]]; pc += 1;
+ 0110aaaabbbbtttt  jeq a,b,t     if (regs[a] == regs[b]) pc += d
+                                 else pc += 1;
+ 1000aaaabbbbcccc print a        print regs[a]; pc += 1;
+                                 (a == b == c. This makes implementation easier)
+
