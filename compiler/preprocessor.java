@@ -108,6 +108,7 @@ public class preprocessor
             BufferedReader bufferedReader = new BufferedReader(fileReader);
 
             while((line = bufferedReader.readLine()) != null) {
+		line = line.replaceAll("\\s+", "");
 		String[] lines = line.split("//");
 		if(lines.length > 2)
 		{

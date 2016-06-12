@@ -35,8 +35,7 @@
 #include "lexan.h"
 
 int maketoken(int type, int which);
-int install_id();
-int install_fnum();
+int install_number();
 int yywrap();
 void parsecomment();
 void parseblockcomment();
@@ -53,34 +52,31 @@ TOKEN yylval;     /* This is the type of the lexical analyzer result */
 
 /* regular definitions */
 
-digit0	[𝟢]
-digit1	[𝟣]
-digit2	[𝟤]
-digit3	[𝟥]
-digit4	[𝟦]
-digit5	[𝟧]
-digit6	[𝟨]
-digit7	[𝟩]
-digit8	[𝟪]
-digit9 	[𝟫]
+digit0 [0]
+digit1 [1]
+digit2 [2]
+digit3 [3]
+digit4 [4]
+digit5 [5]
+digit6 [6]
+digit7 [7]
+digit8 [8]
+digit9 [9]
 
-
-number	({digit0}|{digit1}|{digit2}|{digit3}|{digit4}|{digit5}|{digit6}|{digit7}|{digit8}|{digit9})+
+digit	({digit0}|{digit1}|{digit2}|{digit3}|{digit4}|{digit5}|{digit6}|{digit7}|{digit8}|{digit9})
+number  ({digit}+[ ]*?)+
 comment1 \{
 comment2 \(\*
 string   \'(.*)?\'
 delim    [ \t\n]
 ws       ({delim})+
 letter   [A-Za-z]
-digit    [0-9]
-id       {letter}({letter}|{digit})*
 rnumber  {digit}+
 fnumber  {digit}+(\.{digit}+)?(e[+\-]?{digit}+)?
 
 %%
 {ws}      { /* no action and no return */ }
 
-😑 	    {return(maketoken(RESERVED,DOWNTO));}
 array       {return(maketoken(RESERVED,ARRAY));}
 downto      {return(maketoken(RESERVED,DOWNTO));}
 function    {return(maketoken(RESERVED,FUNCTION));}
@@ -111,37 +107,21 @@ nil         {return(maketoken(RESERVED,NIL));}
 record      {return(maketoken(RESERVED,RECORD));}
 type        {return(maketoken(RESERVED,TYPE));}
 
-{digit0}    {return(maketoken(NUMBERTOK, 0));}
-{digit1}    {return(maketoken(NUMBERTOK, 1));}
-{digit2}    {return(maketoken(NUMBERTOK, 2));}
-{digit3}    {return(maketoken(NUMBERTOK, 3));}
-{digit4}    {return(maketoken(NUMBERTOK, 4));}
-{digit5}    {return(maketoken(NUMBERTOK, 5));}
-{digit6}    {return(maketoken(NUMBERTOK, 6));}
-{digit7}    {return(maketoken(NUMBERTOK, 7));}
-{digit8}    {return(maketoken(NUMBERTOK, 8));}
-
 
 {comment1}  {parsecomment();}
 {comment2} {parseblockcomment();}
-{id}      {return(install_id());}
-{rnumber} {return(install_rnum());}
-{fnumber} {return(install_fnum());}
-{string}  {return(install_string());}
+{number}  {return(install_number());}
 
 "+"       {return(maketoken(OPERATOR, PLUS));}
 "-"       {return(maketoken(OPERATOR, MINUS));}
 "*"       {return(maketoken(OPERATOR, TIMES));}
 "/"       {return(maketoken(OPERATOR, DIVIDE));}
 "<"       {return(maketoken(OPERATOR, LT));}
-"<="      {return(maketoken(OPERATOR, LE));}
+"< ="      {return(maketoken(OPERATOR, LE));}
 "="       {return(maketoken(OPERATOR, EQ));}
-"<>"      {return(maketoken(OPERATOR, NE));}
 ">"       {return(maketoken(OPERATOR, GT));}
-">="      {return(maketoken(OPERATOR, GE));}
-":="      {return(maketoken(OPERATOR, ASSIGN));}
-"^"      {return(maketoken(OPERATOR, POINT));}
-"."       {return(maketoken(OPERATOR, DOT));}
+"> ="      {return(maketoken(OPERATOR, GE));}
+"<>"      {return(maketoken(OPERATOR, NE));}
 
 ","   {return(maketoken(DELIMITER,COMMA));} 
 ";"   {return(maketoken(DELIMITER,SEMICOLON));} 
@@ -178,9 +158,31 @@ void parseblockcomment()
     }
 }
 
+int install_number()
+{
+    int num = 0;
+
+    char test[80];
+    char *sep = " ";
+    char *word, *brkt;
+
+    strcpy(test, yytext);
+
+    for (word = strtok_r(test, sep, &brkt);
+      word;
+      word = strtok_r(NULL, sep, &brkt))
+    {
+        num *= 10;
+	num += atoi(word);
+    }
+    
+    return maketoken(NUMBERTOK, num);
+}
+
 /* Make simple tokens. */
 int maketoken(int type, int which)
 {
+    printf("making token %d", which);
     yylval = (TOKEN) talloc();  /* Make new token, set yylval to point to it */
     yylval->tokentype = type;
     if (type == RESERVED)
@@ -229,49 +231,6 @@ int install_id()
           /* printf("id  %10s   n = %4d\n", yytext, n); */
     return(IDENTIFIER);
 }
-
-int install_string()
-{
-    yylval = (TOKEN) talloc();
-    yylval->tokentype = STRINGTOK;
-
-    char str[15] = ""; 
-
-    strncat(str, yytext+1,15);
-
-    //if there's an apostrophe, cut our one of the '
-    char * apost_ptr = strchr(str, '\'\'');
-    if(apost_ptr)
-    {
-	int idxToDel = apost_ptr-str;
-	memmove(&str[idxToDel], &str[idxToDel + 1], strlen(str) - idxToDel);
-    }
-
-    if(*(str + strlen(str)-1) == '\'')
-    {
-	//Override the closing ' with a null byte
-	strncpy(yylval->stringval, str, strlen(str)-1);
-    }
-    else
-    {
-	strncpy(yylval->stringval, str, strlen(str));
-    }
-
-    return(STRING);
-}
-
-int install_fnum() 
-{  /* Note -- you may use sscanf for this assignment. */
-    float fnum;
-    yylval = (TOKEN) talloc();   /* Make new token, set yylval to point to it */
-    yylval->tokentype = NUMBERTOK;
-    yylval->datatype = REAL;
-
-    sscanf(yytext, "%f", &fnum);
-
-    yylval->realval = fnum;
-    return(NUMBER);
- }
 
 int install_rnum()
 {
