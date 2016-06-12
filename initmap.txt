@@ -23,8 +23,11 @@
 🌜 //lparen
 🌛 //rparen
 🤔 //if
+🙄 //elif
+😳 //else
 👆 //gt
 👇 //lt
 🔙 //ret
+💤 //sleep
 
 

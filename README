@@ -1,4 +1,4 @@
-This is a non C-like language written entirely in emojis. 
+This is a non C-like language written entirely in emojis.
 This project is composed of two main parts: a compiler and a processor.
 
 The current mapping of Emoji -> keywords is as follows
@@ -28,10 +28,12 @@ The current mapping of Emoji -> keywords is as follows
 🌜 //lparen
 🌛 //rparen
 🤔 //if
+🙄 //elif
+😳 //else
 👆 //gt
 👇 //lt
 🔙 //ret
-
+💤 //sleep
 
 All other emojis encountered will be compiled as variable names
 
