@@ -2,4 +2,4 @@
 *.hex
 *.ok
 *.gtkw
-
+testing/*
