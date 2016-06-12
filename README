@@ -3,8 +3,8 @@ This project is composed of two main parts: a compiler and a processor.
 
 The current mapping of Emoji -> keywords is as follows
 
-🔁//loop
-🔂//loop1
+🔁v//loop
+🔂v//loop1
 0️⃣ //0
 1️⃣ //1
 2️⃣ //2
@@ -15,22 +15,22 @@ The current mapping of Emoji -> keywords is as follows
 7️⃣ //7
 8️⃣ //8
 9️⃣ //9
-👉//point
-🙅//mul
-👍//add
-👎//sub
-🖖//div
-🖨//print
-🤐//silence
-🗣//funcall
-≝//def
-👬//eq
-🌜//lparen
-🌛//rparen
-🤔//if
-👆//gt
-👇//lt
-🔙//ret
+👉v//point
+🙅v//mul
+👍v//add
+👎v//sub
+🖖v//div
+🖨v//print
+🤐v//silence
+🗣v//funcall
+≝v//def
+👬v//eq
+🌜v//lparen
+🌛v//rparen
+🤔v//if
+👆v//gt
+👇v//lt
+🔙v//ret
 
 
 All other emojis encountered will be compiled as variable names
