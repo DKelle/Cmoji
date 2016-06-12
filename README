@@ -3,10 +3,10 @@ This project is composed of two main parts: a compiler and a processor.
 
 Usercode lifecycle:
 Compiler:
- - The usercode (written entirely in emojis) will be preprocessed into keywords.
- - The preprocessed code will then be run through a lexer in order to verify syntax, and traslate to tokens.
+ - The usercode (written entirely in emojis) will be preprocessed into english keywords.
+ - The preprocessed code will then be run through a lexer in order to traslate keywords to tokens.
    The lexer is written with the tool Lex.
- - The tokens can then be run through the parser in order to generate Abstract Syntax Trees (AST).
+ - The tokens can then be run through the parser in order to verify syntax and generate Abstract Syntax Trees (AST).
    The parser is written with the tool Yacc.
  - The ASTs can then be run through the code genereate in order to create the binary file that will be executed.
    The Binary file is written in a custom instruction set I call 'Emoji-86'
@@ -51,22 +51,22 @@ The current mapping of Emoji -> keywords is as follows
 8️⃣ //8
 9️⃣ //9
 👉 //point
-🙅 //mul
-👍 //add
-👎 //sub
-🖖 //div
+🙅 //*
+👍 //+
+👎 //-
+🖖 ///
 🖨 //print
 🤐 //silence
 🗣 //funcall
 ≝ //def
-👬 //eq
-🌜 //lparen
-🌛 //rparen
+👬 //=
+🌜 //(
+🌛 //)
 🤔 //if
 🙄 //elif
 😳 //else
-👆 //gt
-👇 //lt
+👆 //>
+👇 //<
 🔙 //ret
 💤 //sleep
 

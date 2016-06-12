@@ -3,3 +3,6 @@
 *.ok
 *.gtkw
 testing/*
+compiler/*.class
+*.txt
+compiler/*.txt

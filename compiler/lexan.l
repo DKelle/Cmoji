@@ -65,73 +65,39 @@ digit9 [9]
 
 digit	({digit0}|{digit1}|{digit2}|{digit3}|{digit4}|{digit5}|{digit6}|{digit7}|{digit8}|{digit9})
 number  ({digit}+[ ]*?)+
-comment1 \{
-comment2 \(\*
-string   \'(.*)?\'
 delim    [ \t\n]
 ws       ({delim})+
-letter   [A-Za-z]
-rnumber  {digit}+
-fnumber  {digit}+(\.{digit}+)?(e[+\-]?{digit}+)?
 
 %%
 {ws}      { /* no action and no return */ }
-
-array       {return(maketoken(RESERVED,ARRAY));}
-downto      {return(maketoken(RESERVED,DOWNTO));}
-function    {return(maketoken(RESERVED,FUNCTION));}
-of          {return(maketoken(RESERVED,OF));}
-repeat      {return(maketoken(RESERVED,REPEAT));}
-until       {return(maketoken(RESERVED,UNTIL));}
-begin       {return(maketoken(RESERVED,BEGINBEGIN));}
-else        {return(maketoken(RESERVED,ELSE));}
-goto        {return(maketoken(RESERVED,GOTO));}
-packed      {return(maketoken(RESERVED,PACKED));}
-set         {return(maketoken(RESERVED,SET));}
-var         {return(maketoken(RESERVED,VAR));}
-case        {return(maketoken(RESERVED,CASE));}
-end         {return(maketoken(RESERVED,END));}
-if          {return(maketoken(RESERVED,IF));}
-procedure   {return(maketoken(RESERVED,PROCEDURE));}
-then        {return(maketoken(RESERVED,THEN));}
-while       {return(maketoken(RESERVED,WHILE));}
-const       {return(maketoken(RESERVED,CONST));}
-file        {return(maketoken(RESERVED,FILEFILE));}
-label       {return(maketoken(RESERVED,LABEL));}
-program     {return(maketoken(RESERVED,PROGRAM));}
-to          {return(maketoken(RESERVED,TO));}
-with        {return(maketoken(RESERVED,WITH));}
-do          {return(maketoken(RESERVED,DO));}
-for         {return(maketoken(RESERVED,FOR));}
-nil         {return(maketoken(RESERVED,NIL));}
-record      {return(maketoken(RESERVED,RECORD));}
-type        {return(maketoken(RESERVED,TYPE));}
-
-
-{comment1}  {parsecomment();}
-{comment2} {parseblockcomment();}
 {number}  {return(install_number());}
 
-"+"       {return(maketoken(OPERATOR, PLUS));}
-"-"       {return(maketoken(OPERATOR, MINUS));}
-"*"       {return(maketoken(OPERATOR, TIMES));}
-"/"       {return(maketoken(OPERATOR, DIVIDE));}
-"<"       {return(maketoken(OPERATOR, LT));}
-"< ="      {return(maketoken(OPERATOR, LE));}
-"="       {return(maketoken(OPERATOR, EQ));}
-">"       {return(maketoken(OPERATOR, GT));}
-"> ="      {return(maketoken(OPERATOR, GE));}
-"<>"      {return(maketoken(OPERATOR, NE));}
+loop		{return(maketoken(RESERVED,LOOP));}
+loop1		{return(maketoken(RESERVED,LOOP1));}
+point		{return(maketoken(RESERVED,TO));}
+print		{return(maketoken(RESERVED,PRINT));}
+silence		{return(maketoken(RESERVED,SILENCE));}
+funcall		{return(maketoken(RESERVED,FUNCALL));}
+def		{return(maketoken(RESERVED,DEF));}
+if		{return(maketoken(RESERVED,IF));}
+elif		{return(maketoken(RESERVED,ELIF));}
+else		{return(maketoken(RESERVED,ELSE));}
+ret		{return(maketoken(RESERVED,RET));}
+sleep		{return(maketoken(RESERVED,SLEEP));}
+function    	{return(maketoken(RESERVED,FUNCTION));}
 
-","   {return(maketoken(DELIMITER,COMMA));} 
-";"   {return(maketoken(DELIMITER,SEMICOLON));} 
-":"   {return(maketoken(DELIMITER,COLON));} 
-"("   {return(maketoken(DELIMITER,LPAREN));} 
-")"   {return(maketoken(DELIMITER,RPAREN));} 
-"["   {return(maketoken(DELIMITER,LBRACKET));} 
-"]"   {return(maketoken(DELIMITER,RBRACKET));} 
-".."  {return(maketoken(DELIMITER,DOTDOT));} 
+"+"       	{return(maketoken(OPERATOR, PLUSOP));}
+"-"       	{return(maketoken(OPERATOR, MINUSOP));}
+"*"       	{return(maketoken(OPERATOR, TIMESOP));}
+"/"       	{return(maketoken(OPERATOR, DIVIDEOP));}
+"<"       	{return(maketoken(OPERATOR, LTOP));}
+"< ="     	{return(maketoken(OPERATOR, LEOP));}
+"="       	{return(maketoken(OPERATOR, EQOP));}
+">"       	{return(maketoken(OPERATOR, GTOP));}
+"> ="     	{return(maketoken(OPERATOR, GEOP));}
 
+"("		{return(maketoken(DELIMITER,LPAREN));} 
+")" 		{return(maketoken(DELIMITER,RPAREN));} 
 
 %%
 
@@ -182,22 +148,10 @@ int install_number()
 /* Make simple tokens. */
 int maketoken(int type, int which)
 {
-    printf("making token %d", which);
     yylval = (TOKEN) talloc();  /* Make new token, set yylval to point to it */
     yylval->tokentype = type;
-    if (type == RESERVED)
-    {
-	yylval->whichval = which - RESERVED_BIAS;
-    }
-    else if (type == OPERATOR)
-    {
-	yylval->whichval = which - OPERATOR_BIAS;
-    }  
-    else if (type == DELIMITER)
-    {
-	yylval->whichval = which - DELIMITER_BIAS;
-    }
-    else if (type == NUMBERTOK)
+    
+    if (type == NUMBERTOK)
     {
 	yylval->intval = which;
         yylval->datatype = INTEGER;
