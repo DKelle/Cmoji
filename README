@@ -1,6 +1,41 @@
 This is a non C-like language written entirely in emojis.
 This project is composed of two main parts: a compiler and a processor.
 
+Usercode lifecycle:
+Compiler:
+ - The usercode (written entirely in emojis) will be preprocessed into keywords.
+ - The preprocessed code will then be run through a lexer in order to verify syntax, and traslate to tokens.
+   The lexer is written with the tool Lex.
+ - The tokens can then be run through the parser in order to generate Abstract Syntax Trees (AST).
+   The parser is written with the tool Yacc.
+ - The ASTs can then be run through the code genereate in order to create the binary file that will be executed.
+   The Binary file is written in a custom instruction set I call 'Emoji-86'
+
+Processor:
+ - The virtual processor loads in the 'Emoji-86' binary file that the compiler has just created
+ - The processor then executes the binary using a Tomasulo out-of-order algorithm
+ - The Tomasulo algorith is used to minimize runtime, and maximize speed.
+
+
+
+Strengths of this language:
+	This language is meant to be a very concise scripting language that makes it very easy to do simple tasks.
+	An Emoji is worth 1000 lines.
+
+Weaknesses of this language:
+	Beacuse this language runs on a virtual processor with a custom instruction set written by hand, the language is limited by the processor.
+	Although what the processor *can* do, it does very well, it cannot write back to memory.
+	This is a very restirctive limitations. In order to store data (variables), the processor must use its internal registers.
+	The virtual processor has a total of 16 registers. 1 register is dedicated to printing, leaving 15 to store user variables.
+	Because variable data must be stored in 16 bit registers, only a single data type can be supported - ints
+	Summary: You can only have 15 variables max per file, all of which must be ints.
+
+	I realize how limiting this makes the language. I had to make the choice between the following two design approaches:
+	1) Compile into X86 and have the language be Turing complete
+	2) Compile into Emoji-86, and execute on a custom CPU I wrote by hand.
+	I made the choice to have Cmoji run on 100% custom code from start of compile time to end of execution time, despite this choice drastically limiting the capabilities of the language.	
+
+
 The current mapping of Emoji -> keywords is as follows
 
 🔁 //loop
@@ -38,7 +73,7 @@ The current mapping of Emoji -> keywords is as follows
 All other emojis encountered will be compiled as variable names
 
 
-The instruction set for the virtual processor is as follows:
+The Emoji-86 instruction set for the virtual processor is as follows:
  encoding          instruction   description
 
  0000iiiiiiiitttt  mov i,t       regs[t] = i; pc += 1;
