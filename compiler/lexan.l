@@ -36,9 +36,8 @@
 
 int maketoken(int type, int which);
 int install_number();
+int install_id();
 int yywrap();
-void parsecomment();
-void parseblockcomment();
 
 /* If the lex yytext buffer turns out to be too small to hold comments,
    add the following lines:
@@ -67,10 +66,13 @@ digit	({digit0}|{digit1}|{digit2}|{digit3}|{digit4}|{digit5}|{digit6}|{digit7}|{
 number  ({digit}+[ ]*?)+
 delim    [ \t\n]
 ws       ({delim})+
+var     (var){digit}+
 
 %%
-{ws}      { /* no action and no return */ }
-{number}  {return(install_number());}
+{ws}        { /* no action and no return */ }
+{number}    {return(install_number());}
+{var}       {return(install_id());}
+
 
 loop		{return(maketoken(RESERVED,LOOP));}
 loop1		{return(maketoken(RESERVED,LOOP1));}
@@ -78,13 +80,13 @@ point		{return(maketoken(RESERVED,TO));}
 print		{return(maketoken(RESERVED,PRINT));}
 silence		{return(maketoken(RESERVED,SILENCE));}
 funcall		{return(maketoken(RESERVED,FUNCALL));}
-def		{return(maketoken(RESERVED,DEF));}
-if		{return(maketoken(RESERVED,IF));}
+def         {return(maketoken(RESERVED,DEF));}
+if		    {return(maketoken(RESERVED,IF));}
 elif		{return(maketoken(RESERVED,ELIF));}
 else		{return(maketoken(RESERVED,ELSE));}
-ret		{return(maketoken(RESERVED,RET));}
+ret		    {return(maketoken(RESERVED,RET));}
 sleep		{return(maketoken(RESERVED,SLEEP));}
-function    	{return(maketoken(RESERVED,FUNCTION));}
+function    {return(maketoken(RESERVED,FUNCTION));}
 
 "+"       	{return(maketoken(OPERATOR, PLUSOP));}
 "-"       	{return(maketoken(OPERATOR, MINUSOP));}
@@ -96,7 +98,7 @@ function    	{return(maketoken(RESERVED,FUNCTION));}
 ">"       	{return(maketoken(OPERATOR, GTOP));}
 "> ="     	{return(maketoken(OPERATOR, GEOP));}
 
-"("		{return(maketoken(DELIMITER,LPAREN));} 
+"("		    {return(maketoken(DELIMITER,LPAREN));} 
 ")" 		{return(maketoken(DELIMITER,RPAREN));} 
 
 %%
@@ -105,24 +107,6 @@ function    	{return(maketoken(RESERVED,FUNCTION));}
    1. "What is it?": a small integer such as NUMBER that indicates the
       kind of item that was found; this is the return() value.
    2. The value itself.  This is yylval, which points to a TOKEN.   */
-
-
-void parsecomment()
-{       
-    while (input() != '}');
-}
-
-void parseblockcomment()
-{       
-    loop:
-    while (input() != '*');
-    switch (input())
-    {
-	case ')': break;
-        case '*': unput('*');
-        default: goto loop;
-    }
-}
 
 int install_number()
 {
@@ -142,25 +126,8 @@ int install_number()
 	num += atoi(word);
     }
     
-    return maketoken(NUMBERTOK, num);
-}
-
-/* Make simple tokens. */
-int maketoken(int type, int which)
-{
-    yylval = (TOKEN) talloc();  /* Make new token, set yylval to point to it */
-    yylval->tokentype = type;
-    
-    if (type == NUMBERTOK)
-    {
-	yylval->intval = which;
-        yylval->datatype = INTEGER;
-    }
-    else
-    {
-	yylval->whichval = which;
-    }
-    return(which);
+    maketoken(NUMBERTOK, num);
+    return (NUMBER);
 }
 
 int install_id()
@@ -171,14 +138,14 @@ int install_id()
     n = yyleng;            /* number of characters */
     if ( n > 15 )
     {
-	n = 15;
+	    n = 15;
     }
 
     for (i = 0; i < n ; i++)
     { 
-	c = yytext[i];
+	    c = yytext[i];
         /* if (islower(c)) c = toupper(c); */ /* to raise to upper case */
-	yylval->stringval[i] = c;
+        yylval->stringval[i] = c;
     };
 
     yylval->stringval[n] = '\0';
@@ -186,18 +153,21 @@ int install_id()
     return(IDENTIFIER);
 }
 
-int install_rnum()
+/* Make simple tokens. */
+int maketoken(int type, int which)
 {
-    int rnum;
-    yylval = (TOKEN) talloc();
-    yylval->tokentype = NUMBERTOK;
-    yylval->datatype = INTEGER;
-
-    rnum = atoi(yytext);
-
-    yylval->intval = rnum;
-    return(NUMBER);
-
+    yylval = (TOKEN) talloc();  /* Make new token, set yylval to point to it */
+    yylval->tokentype = type;
+    if (type == NUMBERTOK)
+    {
+	    yylval->intval = which;
+        yylval->datatype = INTEGER;
+    }
+    else
+    {
+	    yylval->whichval = which;
+    }
+    return(which);
 }
 
 int yywrap() 

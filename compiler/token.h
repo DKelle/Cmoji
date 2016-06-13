@@ -47,16 +47,16 @@ typedef struct tokn {
 #define DELIMITER      	1
 #define RESERVED       	2
 #define IDENTIFIERTOK  	3
-#define NUMBERTOK	4 
+#define NUMBERTOK	    4 
 
 #define LOOP		1	/* reserved numbers */
 #define LOOP1  		2
-#define TO 		3
+#define TO 		    3
 #define PRINT  		4
 #define SILENCE 	5
 #define FUNCALL		6
 #define DEF 		7
-#define IF 		8
+#define IF 		    8
 #define ELIF   		9
 #define ELSE   		10
 #define RET 		11
@@ -67,17 +67,16 @@ typedef struct tokn {
 #define MINUSOP       	2
 #define TIMESOP        	3
 #define DIVIDEOP       	4
-#define EQOP           	6
-#define NEOP           	7
-#define LTOP           	8
-#define LEOP           	9
-#define GEOP          	10
-#define GTOP          	11
+#define EQOP           	5
+#define LTOP           	6
+#define LEOP           	7
+#define GEOP          	8
+#define GTOP          	9
+#define IFOP          	10
+#define NEOP            11
 #define ANDOP         	12
 #define OROP          	13
 #define NOTOP         	14
-#define DIVOP         	15
-#define IFOP          	16
 
 #define LPAREN 		1	/* delimter numbers */
 #define RPAREN 		2
@@ -86,4 +85,4 @@ typedef struct tokn {
 #define IDENTIFIER	1
 #define NUMBER 		2
 
-#define YYTOKENTYPE 0
+#define YYTOKENTYPE 0 

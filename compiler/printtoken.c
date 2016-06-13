@@ -28,18 +28,16 @@
    You may use them if you wish, or you may copy them and
    modify them as you see fit. */
 
-static char* opprnt[]  = {" ", "+", "-", "*", "/", ":=", "=", "<>", "<", "<=",
-                          ">=", ">",  "^", ".", "and", "or", "not", "div",
-                          "mod", "in", "if", "goto", "progn", "label",
-                          "funcall", "aref", "program", "float"};
-static char *delprnt[] = { "  ", " ,", " ;", " :", " (", " )", " [", " ]",
-                           ".."} ;
-static char *resprnt[] = { " ", "array", "begin", "case", "const", "do",
-                           "downto", "else", "end", "file", "for",
-		           "function", "goto", "if", "label", "nil",
-                           "of", "packed", "procedure", "program", "record",
-                           "repeat", "set", "then", "to", "type",
-		           "until", "var", "while", "with" };
+
+static char* opprnt[]  = {" ", "+", "-", "*", "/", "=", "<", "<=",
+                              ">=", ">", "if", "<>", "and", "or", "not"};
+
+static char *delprnt[] = { "  ", " (", " )"} ;
+
+static char *resprnt[] = {"", "loop","loop1","to","print","silence",
+                          "funcall","def","if","elif","else","ret",
+                          "sleep","function"};
+
 
 TOKEN talloc()           /* allocate a new token record */
 { 

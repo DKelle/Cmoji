@@ -35,6 +35,8 @@
 #include "token.h"
 #include "lexan.h"
 
+int yylex();
+
 int main()          /* Calls yylex repeatedly to test */
   { 
     int res, done;
