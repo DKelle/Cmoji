@@ -165,12 +165,22 @@ int maketoken(int type, int which)
     {
 	    yylval->intval = which;
         yylval->datatype = INTEGER;
+        return(which);
     }
-    else
+    else if (type == RESERVED)
     {
-	    yylval->whichval = which;
+	    yylval->whichval = which - RESERVED_BIAS;
     }
-    return(which);
+    else if (type == OPERATOR)
+    {
+	    yylval->whichval = which - OPERATOR_BIAS;
+    }
+    else if (type == DELIMITER)
+    {
+	    yylval->whichval = which - DELIMITER_BIAS;
+    }
+    
+    return(yylval->whichval);
 }
 
 int yywrap() 

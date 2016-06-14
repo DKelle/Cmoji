@@ -47,8 +47,8 @@ pars1y: pars1.tab.o lex.yy.o printtoken.o pprint.o symtab.o
 
 # To compile your file parse.y --> parser
 #      using your file lexan.l
-parser: y.tab.o lex.yy.o printtoken.o pprint.o symtab.o
-	cc -o parser y.tab.o lex.yy.o printtoken.o pprint.o symtab.o -ll
+parser: y.tab.o lex.yy.o printtoken.o pprint.o 
+	cc -o parser y.tab.o lex.yy.o printtoken.o pprint.o  -ll
 
 # To compile starter file codgen.c --> comp1y
 #      using your files lexan.l and parse.y

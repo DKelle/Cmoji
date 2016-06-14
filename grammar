@@ -23,7 +23,7 @@ if			: IF expression LPAREN statement_list RPAREN
 assignment	: var EQ expression
 			;
 
-funcall		: CALL funcname
+funcall		: CALL IDENTIFIER
 			;
 
 loop		: LOOP expression LPAREN statement_list RPAREN

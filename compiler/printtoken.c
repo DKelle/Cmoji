@@ -30,13 +30,13 @@
 
 
 static char* opprnt[]  = {" ", "+", "-", "*", "/", "=", "<", "<=",
-                              ">=", ">", "if", "<>", "and", "or", "not"};
+                              ">=", ">", "if", "and", "or", "not", "goto", "label"};
 
 static char *delprnt[] = { "  ", " (", " )"} ;
 
 static char *resprnt[] = {"", "loop","loop1","to","print","silence",
                           "funcall","def","if","elif","else","ret",
-                          "sleep","function"};
+                          "sleep","function", "halt"};
 
 
 TOKEN talloc()           /* allocate a new token record */

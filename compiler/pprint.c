@@ -65,17 +65,12 @@ void printtok(TOKEN tok)             /* print a token in abbreviated form */
 	{case IDENTIFIERTOK:
            printf ("%s", tok->stringval);
            break;
-         case STRINGTOK:
-           printf ("'%s'", tok->stringval);
-           break;
          case NUMBERTOK:
            switch (tok->datatype)
-             {case INTEGER: case POINTER:
+             {case INTEGER: 
                 printf ("%d", tok->intval);
                 break;
-	      case REAL:
-                printf ("%e", tok->realval);
-                break; }
+	       }
 	 case DELIMITER: case RESERVED: case OPERATOR:
 	   break;
 	 }
@@ -90,20 +85,13 @@ void dbugprinttok(TOKEN tok)  /* print a token in 'nice' debugging form */
                              (long)tok, tok->stringval, tok->datatype,
                              (long)tok->link);
 		      break;
-	       case STRINGTOK:
-	              printf(" token %ld  STR %12s  dtype %2d  link %ld\n",
-                     (long)tok, tok->stringval, tok->datatype, (long)tok->link);
-		      break;
 	       case NUMBERTOK:
 		 switch (tok->datatype)
-		   {case INTEGER: case POINTER:
+		   {case INTEGER:
 		      printf(" token %ld  NUM %12d  dtype %2d  link %ld\n",
                       (long)tok, tok->intval, tok->datatype, (long)tok->link);
 		      break;
-		    case REAL:
-		      printf(" token %ld  NUM %12e  dtype %2d  link %ld\n",
-                      (long)tok, tok->realval, tok->datatype, (long)tok->link);
-		      break; };
+		    };
                       break;
 		    case OPERATOR:
 	     printf(" token %ld  OP  %12s  dtype %2d  link %ld  operands %ld\n",
