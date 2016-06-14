@@ -1,0 +1,93 @@
+program	: statement_list HALT
+		;
+
+statement_list	: statement statement_list
+				| statement
+				;
+
+statement 	: declaration
+			| if
+			| assignment
+			| funcall
+			| loop
+			;
+
+declaration : DEF var
+			| DEF assignment
+			;
+
+if			: IF expression LPAREN statement_list RPAREN
+			| IF expression LPAREN statement_list RPAREN elif
+			;
+
+assignment	: var EQ expression
+			;
+
+funcall		: CALL funcname
+			;
+
+loop		: LOOP expression LPAREN statement_list RPAREN
+			| LOOP range LPAREN statement_list RPAREN
+			| LOOP1 LPAREN statement_list RPAREN
+			;
+
+var 		: IDENTIFIER
+			;
+
+expression 	: expression compare_op simple_expression
+			| simple_expression
+			;
+
+elif		: ELIF expression LPAREN statement_list RPAREN
+			| ELIF expression LPAREN statement_list RPAREN else
+			;
+
+range		: number POINT number
+			;
+
+compare_op 	: EQ | LT | LE | GT | GE
+			;
+
+simple_expression	: term
+					| simple_expression add_op term
+					;
+
+else 	: ELSE LPAREN statement_list RPAREN
+		;
+
+number	: var
+		| NUMBER
+
+term 	: term times_op factor
+		| factor
+		;
+
+add_op 	: PLUS | MINUS | OR
+		;
+
+times_op 	: MUL | DIV | AND
+			;
+
+factor	: NUMBER
+		| var
+		| LPAREN expression RPAREN
+		;
+
+
+def stack:
+	if
+	assignment
+	funcall
+	loop
+	var
+	expression
+	else
+	range
+	compare_op
+	simple_expression
+	else
+	number
+	term
+	add_op
+	times_op
+	factor
