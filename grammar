@@ -72,22 +72,3 @@ factor	: NUMBER
 		| var
 		| LPAREN expression RPAREN
 		;
-
-
-def stack:
-	if
-	assignment
-	funcall
-	loop
-	var
-	expression
-	else
-	range
-	compare_op
-	simple_expression
-	else
-	number
-	term
-	add_op
-	times_op
-	factor
