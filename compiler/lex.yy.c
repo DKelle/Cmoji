@@ -2043,6 +2043,7 @@ int maketoken(int type, int which)
     else if (type == RESERVED)
     {
 	    yylval->whichval = which - RESERVED_BIAS;
+		printf("creating a reserved token with which = %d and %d\n", which, which-RESERVED_BIAS);
     }
     else if (type == OPERATOR)
     {

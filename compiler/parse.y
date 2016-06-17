@@ -72,8 +72,10 @@ TOKEN parseresult;
 %token DEF IF ELIF ELSE RET SLEEP FUNCTION HALT
 
 %%
-program : statement_list HALT
-        ;
+program : statement_list HALT				
+        | PRINT								{parseresult = $1;}
+        |                                   {parseresult = makenumbertok(4);}
+		;
 
 statement_list  : statement statement_list
                 | statement
@@ -188,6 +190,12 @@ TOKEN cons(TOKEN item, TOKEN list)           /* add item to front of list */
         dbugprinttok(list);
     };
     return item;
+}
+
+TOKEN printsomething(TOKEN prgm)
+{
+	printf("got to here\n");
+    return prgm;
 }
 
 TOKEN binop(TOKEN op, TOKEN lhs, TOKEN rhs)        /* reduce binary operator */
@@ -529,16 +537,17 @@ int wordaddress(int n, int wordsize)
 */
 
  
-yyerror(s)
+int yyerror(s)
   char * s;
-  { 
+{ 
   fputs(s,stderr); putc('\n',stderr);
-  }
+  return 0;
+}
 
-main()
+int main()
 { 
     int res;
-    initsyms();
+    //initsyms();a
     res = yyparse();
 //    printst();
 //    printf("yyparse result = %8d\n", res);
@@ -546,4 +555,5 @@ main()
 //    if (DEBUG & DB_PARSERES) dbugprinttok(parseresult);
 //    ppexpr(parseresult);           /* Pretty-print the result tree */
 //    gencode(parseresult, blockoffs[blocknumber], labelnumber);
+    return 0;
 }
