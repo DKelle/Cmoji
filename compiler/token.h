@@ -43,43 +43,49 @@ typedef struct tokn {
 #define realval   tokenval.realnum
 #define stringval tokenval.tokenstring
 
-#define OPERATOR       	0	/* token types */
-#define DELIMITER      	1
-#define RESERVED       	2
-#define IDENTIFIERTOK  	3
-#define NUMBERTOK	    4 
+#define OPERATOR        258 /* token types */
+#define DELIMITER       259
+#define RESERVED        260
+#define IDENTIFIERTOK   261
+#define NUMBERTOK       262
 
-#define LOOP		1	/* reserved numbers */
-#define LOOP1  		2
-#define TO 		    3
-#define PRINT  		4
-#define SILENCE 	5
-#define FUNCALL		6
-#define DEF 		7
-#define IF 		    8
-#define ELIF   		9
-#define ELSE   		10
-#define RET 		11
-#define SLEEP  		12
-#define FUNCTION   	13
+#define LOOP        279 /* reserved numbers */
+#define LOOP1       280
+#define TO          281
+#define PRINT       282
+#define SILENCE     283
+#define FUNCALL     284
+#define DEF         285
+#define IF          286
+#define ELIF        287
+#define ELSE        288
+#define RET         289
+#define SLEEP       290
+#define FUNCTION    291
+#define HALT        292
+#define RESERVED_BIAS   (LOOP - 1)
 
-#define PLUSOP         	1	/* operator numbers */
-#define MINUSOP       	2
-#define TIMESOP        	3
-#define DIVIDEOP       	4
-#define EQOP           	5
-#define LTOP           	6
-#define LEOP           	7
-#define GEOP          	8
-#define GTOP          	9
-#define IFOP          	10
-#define NEOP            11
-#define ANDOP         	12
-#define OROP          	13
-#define NOTOP         	14
+#define PLUSOP          263 /* operator numbers */
+#define MINUSOP         264
+#define TIMESOP         265
+#define DIVIDEOP        266
+#define EQOP            267
+#define LTOP            268
+#define LEOP            269
+#define GEOP            270
+#define GTOP            271
+#define IFOP            272
+#define NEOP            273
+#define ANDOP           274
+#define OROP            275
+#define NOTOP           276
+#define GOTOOP          293
+#define LABELOP         294
+#define OPERATOR_BIAS   (PLUSOP - 1) 
 
-#define LPAREN 		1	/* delimter numbers */
-#define RPAREN 		2
+#define LPAREN  277 /* delimeter numbers */
+#define RPAREN  278
+#define DELIMITER_BIAS (LPAREN - 1)
 
 #define INTEGER    	0	/* datatype numbers */
 #define IDENTIFIER	1
