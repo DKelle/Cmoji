@@ -38,6 +38,7 @@ int maketoken(int type, int which);
 int install_number();
 int install_id();
 int yywrap();
+int var_count = 0;
 
 /* If the lex yytext buffer turns out to be too small to hold comments,
    add the following lines:
@@ -87,6 +88,7 @@ else		{return(maketoken(RESERVED,ELSE));}
 ret		    {return(maketoken(RESERVED,RET));}
 sleep		{return(maketoken(RESERVED,SLEEP));}
 function    {return(maketoken(RESERVED,FUNCTION));}
+halt       {return(maketoken(RESERVED,HALT));}
 
 "+"       	{return(maketoken(OPERATOR, PLUSOP));}
 "-"       	{return(maketoken(OPERATOR, MINUSOP));}
@@ -113,6 +115,7 @@ or          {return(maketoken(OPERATOR, OROP));}
 
 int install_number()
 {
+    printf("installing number\n");
     int num = 0;
 
     char test[80];
@@ -128,9 +131,14 @@ int install_number()
         num *= 10;
 	num += atoi(word);
     }
-    
-    maketoken(NUMBERTOK, num);
-    return (NUMBER);
+
+
+    yylval = (TOKEN) talloc();
+    yylval->tokentype = NUMBERTOK;
+	yylval->intval = num;
+    yylval->datatype = INTEGER;
+
+    return (NUMBERTOK);
 }
 
 int install_id()
@@ -152,8 +160,8 @@ int install_id()
     };
 
     yylval->stringval[n] = '\0';
-          /* printf("id  %10s   n = %4d\n", yytext, n); */
-    return(IDENTIFIER);
+           printf("id  %10s   n = %4d\n", yytext, n); 
+    return(IDENTIFIERTOK);
 }
 
 /* Make simple tokens. */
@@ -161,13 +169,7 @@ int maketoken(int type, int which)
 {
     yylval = (TOKEN) talloc();  /* Make new token, set yylval to point to it */
     yylval->tokentype = type;
-    if (type == NUMBERTOK)
-    {
-	    yylval->intval = which;
-        yylval->datatype = INTEGER;
-        return(which);
-    }
-    else if (type == RESERVED)
+    if (type == RESERVED)
     {
 	    yylval->whichval = which - RESERVED_BIAS;
     }

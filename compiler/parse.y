@@ -72,20 +72,23 @@ TOKEN parseresult;
 %token DEF IF ELIF ELSE RET SLEEP FUNCTION HALT
 
 %%
-program : statement_list HALT				
-        | PRINT			{parseresult = $1;}
-        |			{parseresult = makenumbertok(4);}
-		;
+program : statement_list HALT   {parseresult = $1;}				
+		| temp_assign  {parseresult = $1; }
+        ;
 
-statement_list  : statement statement_list
-                | statement
+temp_assign     : IDENTIFIERTOK EQOP NUMBERTOK { $$ = binop($2, $1, $3); }
+                ;
+
+statement_list  : statement statement_list  {$$ = cons($1,$2);}
+                | statement                 { $$ = makestatement($1);  }
                 ;
 
 statement   : declaration
             | if
-            | assignment
+            | assignment    { $$ = makestatement($1); }
             | funcall
-            | loop
+            | loop          { $$ = $1; }
+            | print         { $$ = $1; }
             ;
 
 declaration : DEF var
@@ -96,36 +99,36 @@ if          : IF expression LPAREN statement_list RPAREN
             | IF expression LPAREN statement_list RPAREN elif
             ;
 
-assignment  : var EQOP expression
+assignment  : var EQOP expression { $$ = $1; }
             ;
 
 funcall     : FUNCALL IDENTIFIERTOK 
             ;
 
 loop        : LOOP expression LPAREN statement_list RPAREN
-            | LOOP range LPAREN statement_list RPAREN
+            | LOOP range LPAREN statement_list RPAREN       { $$ = makeloop($2, $3); }
             | LOOP1 LPAREN statement_list RPAREN
             ;
 
-var         : IDENTIFIERTOK
+var         : IDENTIFIERTOK { $$ = $1; }
             ;
 
 expression  : expression compare_op simple_expression
-            | simple_expression
+            | simple_expression                         { $$ = $1; }
             ;
 
 elif        : ELIF expression LPAREN statement_list RPAREN
             | ELIF expression LPAREN statement_list RPAREN else
             ;
 
-range       : number TO number
+range       : number TO number  { $$ = cons($1, $3); }
             ;
 
 compare_op  : EQOP | LTOP | LEOP | GTOP | GEOP
             ;
 
-simple_expression   : term
-                    | simple_expression add_op term
+simple_expression   : term                          { $$ = $1; }
+                    | simple_expression add_op term 
                     ;
 
 else    : ELSE LPAREN statement_list RPAREN
@@ -135,7 +138,7 @@ number  : var
         | NUMBERTOK
 
 term    : term times_op factor
-        | factor
+        | factor                { $$ = $1; }
         ;
 
 add_op  : PLUSOP | MINUSOP | OROP
@@ -144,11 +147,13 @@ add_op  : PLUSOP | MINUSOP | OROP
 times_op    : TIMESOP | DIVIDEOP | ANDOP
             ;
 
-factor  : NUMBERTOK
+factor  : NUMBERTOK                 { $$ = $1; }
         | var
         | LPAREN expression RPAREN
         ;
 
+print   : PRINT expression  {$$ = cons($1, $2); }
+        ;
 
 %%
 
@@ -179,6 +184,18 @@ int labelnumber = 0;  /* sequential counter for internal label numbers */
 int labels[10000]; //use this so we can mape user defined label number -> internal label numbering
    /*  Note: you should add to the above values and insert debugging
        printouts in your routines similar to those that are shown here.     */
+
+TOKEN makeloop(TOKEN range, TOKEN stmn )
+{
+    range->operands = stmn;
+    return range;
+}
+
+TOKEN makestatement(TOKEN statement)
+{
+    printf("Trying to make statement\n");
+    return statement;
+}
 
 TOKEN cons(TOKEN item, TOKEN list)           /* add item to front of list */
 {
@@ -234,125 +251,6 @@ TOKEN makeif(TOKEN tok, TOKEN exp, TOKEN thenpart, TOKEN elsepart)
 }
 
 
-/* makewhile makes structures for a while statement.                
-   tok and tokb are (now) unused tokens that are recycled.        
-TOKEN makewhile(TOKEN tok, TOKEN expr, TOKEN tokb, TOKEN statement)
-{
-    //create the label and goto that we will jump back to
-    TOKEN label = makelabel();
-    TOKEN gototok = makegoto(label->operands->intval);
-   
-    //put the goto at the end of the statementlist
-    TOKEN temp = statement->operands; 
-    while(temp->link != NULL)         
-    {                                 
-        temp = temp->link;            
-    }                                 
-    temp->link = gototok;        
-    //Use the condition we just made to create the iftok   
-    TOKEN iftok = makeif(tokb, expr, statement, NULL);
-
-    label->link = iftok;
-
-    temp = copytok(tok);
-    TOKEN prog = makeprogn(temp, label);
-
-    return prog;
-    
-}*/
-
-/* makefor makes structures for a for statement.
-   sign is 1 for normal loop, -1 for downto.
-   asg is an assignment statement, e.g. (:= i 1)
-   endexpr is the end expression
-   tok, tokb and tokc are (now) unused tokens that are recycled. 
-TOKEN makefor(int sign, TOKEN tok, TOKEN asg, TOKEN tokb, TOKEN endexpr, TOKEN tokc, TOKEN statement)
-{
-    TOKEN labeltok = makelabel();
-    asg->link = labeltok;
-
-    //Make a copy of the indentifier used in the asg
-    TOKEN idtok = copytok(asg->operands);
-    //create an operator token that uses LTE as the operator
-    TOKEN optok = makeoperatortok(LEOP);
-    //Use the two tokens we made (and the endexpr) to create the conditiontok
-    TOKEN condition = binop(optok, idtok, endexpr);
-
-    statement = makeprogn(talloc(), statement);
-    //Use the condition we just made to create the iftok
-    TOKEN iftok = makeif(tokb, condition, statement, NULL);
-    //This iftok should be the labels link
-    labeltok->link = iftok;
-
-    //Make the i+1/i-1 node
-    int incop = (sign == 1) ? PLUSOP : MINUSOP;
-    TOKEN exprtok = binop(makeoperatortok(incop), copytok(idtok), makenumbertok(1));
-    //Make the i = (incop) node
-    TOKEN incrementtok = binop(makeoperatortok(ASSIGNOP), copytok(idtok), exprtok);
-
-
-    //Make the increment happen after the statemtn has executed by finding the statements last link
-    TOKEN temp = statement->operands;
-    while(temp->link != NULL)
-    {
-    	temp = temp->link;
-    }
-    temp->link = incrementtok;
-
-    //Make the goto node, so we continuously do *statemnt*
-    TOKEN gototok = makegoto(labeltok->operands->intval);
-    //Make sure the goto executes after the increment/decrement
-    incrementtok->link = gototok;
-
-    if(DEBUG & DB_MAKEFOR)
-    {
-	printf("makefor\n");
-	dbugprinttok(tok);
-	dbugprinttok(asg);
-	dbugprinttok(endexpr);
-	dbugprinttok(statement);
-    }
-
-    return asg;
-}
-*/
-
-/* makefuncall makes a FUNCALL operator and links it to the fn and args.
-   tok is a (now) unused token that is recycled.
-//TODO: size isn't quite right for new
-TOKEN makefuncall(TOKEN tok, TOKEN fn, TOKEN args)
-{
-
-    tok->tokentype = OPERATOR;
-    tok->whichval = FUNCALLOP;
-
-    if(strcmp(fn->stringval, "new") == 0)
-    {
-	TOKEN ret = makeoperatortok(ASSIGNOP);
-	SYMBOL obj = searchst(args->stringval);
-	fn->link = makenumbertok(obj->datatype->datatype->datatype->size);
-	tok->operands = fn;
-	args->link = tok;
-	ret->operands = args;
-
-	return ret;
-    }
-    else
-    {
-        fn->link = args;
-        tok->operands = fn;
-    }
-
-    if(DEBUG & DB_MAKEFUNCALL)
-    {
-	printf("makefor\n");
-	dbugprinttok(tok);
-	dbugprinttok(fn);
-	dbugprinttok(args);
-    }
-
-    return tok;
-}*/
 
 /* dogoto is the action for a goto statement.      
    tok is a (now) unused token that is recycled. */
@@ -417,74 +315,12 @@ TOKEN makeconst(TOKEN sign, TOKEN tok)
     return tok;
 }
 
-/*
-TOKEN findid(TOKEN tok)
-{
-    SYMBOL sym, typ;
-    
-    sym = searchst(tok->stringval);
-    tok->symentry = sym;
-    typ = sym->datatype;
-    tok->symtype = typ;
-    if( typ->kind == BASICTYPE || typ->kind == POINTERSYM)
-    {
-	tok->datatype = typ->basicdt;
-    }
-    return tok;
-}
-*/
-
 void instlabel(TOKEN tok)
 {
     tok->operands = makenumbertok(labelnumber);
     labelnumber = labelnumber + 1;
     //Do something to install the label, and then incrememtn the lavel counter
 }
-
-/*
-void instconst(TOKEN idtok, TOKEN consttok)
-{
-    SYMBOL sym, typesym; int align;
-    if (DEBUG & DB_INSTCONST)
-    {
-        printf("instconst\n");
-        dbugprinttok(idtok);
-        dbugprinttok(consttok);
-    };
-
-    //Make sure the consttok knows what kind of constant it is (real, int, string)
-    switch(consttok->datatype)
-    {
-	case INTEGER:
-	    typesym = searchst("integer");
-	    typesym->constval.intnum = consttok->intval;
-	    break;
-	case REAL:
-	    typesym = searchst("real");
-	    typesym->constval.realnum = consttok->realval;
-	    break;
-	case STRING:
-	    typesym = searchst("string");
-	    strcpy(typesym->constval.stringconst, consttok->stringval);
-	    break;
-    }
-
-    if(typesym == NULL) printf("uh oh - NULL\n");
-
-    align = alignsize(typesym);
- 
-    sym = insertsym(idtok->stringval);
-    sym->kind = CONSTSYM;
-    sym->size = typesym->size;
-
-
-    sym->datatype = typesym;
-    sym->basicdt = typesym->basicdt; 
-    sym->constval = typesym->constval;
-   
-    if (DEBUG & DB_INSTCONST) printst();
-}
-*/
 
 TOKEN givesign(TOKEN sign, TOKEN tok)
 {
@@ -529,15 +365,6 @@ TOKEN copytok(TOKEN tok)
     return cpy;
 }
 
-/* This function is inside instvars.c
-
-int wordaddress(int n, int wordsize)
-{ 
-    return ((n + wordsize - 1) / wordsize) * wordsize; 
-}
-*/
-
- 
 int yyerror(s)
   char * s;
 { 
@@ -551,10 +378,10 @@ int main()
     //initsyms();a
     res = yyparse();
 //    printst();
-//    printf("yyparse result = %8d\n", res);
+    printf("yyparse result = %8d\n", res);
     
 //    if (DEBUG & DB_PARSERES) dbugprinttok(parseresult);
-    dbugprinttok(parseresult);
+    //dbugprinttok(parseresult);
     ppexpr(parseresult);           /* Pretty-print the result tree */
 //    gencode(parseresult, blockoffs[blocknumber], labelnumber);
     return 0;

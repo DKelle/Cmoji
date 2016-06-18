@@ -93,3 +93,7 @@ TOKEN makeconst(TOKEN sign, TOKEN tok);
 
 /* talloc allocates a new TOKEN record. */
 TOKEN talloc();
+
+TOKEN makeloop(TOKEN range, TOKEN stmn);
+
+TOKEN makestatement(TOKEN stmnt);
