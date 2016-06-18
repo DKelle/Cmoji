@@ -74,9 +74,13 @@ TOKEN parseresult;
 %%
 program : statement_list HALT   {parseresult = $1;}				
 		| temp_assign  {parseresult = $1; }
+        | temp_compare {parseresult = $1; }
         ;
 
-temp_assign     : IDENTIFIERTOK EQOP NUMBERTOK { $$ = binop($2, $1, $3); }
+temp_compare    : compare_op temp_compare   {$$ = cons($1,$2);}
+                | compare_op                {$$ = $1;}
+
+temp_assign     : IDENTIFIERTOK EQOP expression { $$ = binop($2, $1, $3); }
                 ;
 
 statement_list  : statement statement_list  {$$ = cons($1,$2);}
