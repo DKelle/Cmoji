@@ -75,7 +75,12 @@ TOKEN parseresult;
 program : statement_list HALT   {parseresult = $1;}				
 		| temp_assign  {parseresult = $1; }
         | temp_compare {parseresult = $1; }
+        | temp_add      {parseresult = $1;}
         ;
+
+temp_add    : NUMBERTOK add_op NUMBERTOK temp_add    {$$ = cons(binop($2,$1,$3), $4);}
+            | NUMBERTOK add_op NUMBERTOK {$$ = binop($2,$1,$3);}
+            ;
 
 temp_compare    : compare_op temp_compare   {$$ = cons($1,$2);}
                 | compare_op                {$$ = $1;}
