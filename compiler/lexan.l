@@ -115,7 +115,6 @@ or          {return(maketoken(OPERATOR, OROP));}
 
 int install_number()
 {
-    printf("installing number\n");
     int num = 0;
 
     char test[80];

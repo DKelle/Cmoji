@@ -76,7 +76,12 @@ program : statement_list HALT   {parseresult = $1;}
 		| temp_assign  {parseresult = $1; }
         | temp_compare {parseresult = $1; }
         | temp_add      {parseresult = $1;}
+        | temp_if       {parseresult = $1; }
+        | expression    {parseresult = $1;}
         ;
+
+temp_if     : IF expression LPAREN statement RPAREN { $$ = cons($1, cons($2,$4));}
+            ;
 
 temp_add    : NUMBERTOK add_op NUMBERTOK temp_add    {$$ = cons(binop($2,$1,$3), $4);}
             | NUMBERTOK add_op NUMBERTOK {$$ = binop($2,$1,$3);}
@@ -122,7 +127,7 @@ loop        : LOOP expression LPAREN statement_list RPAREN
 var         : IDENTIFIERTOK { $$ = $1; }
             ;
 
-expression  : expression compare_op simple_expression
+expression  : expression compare_op simple_expression       { $$ = binop($2,$1,$3);}
             | simple_expression                         { $$ = $1; }
             ;
 
@@ -133,7 +138,7 @@ elif        : ELIF expression LPAREN statement_list RPAREN
 range       : number TO number  { $$ = cons($1, $3); }
             ;
 
-compare_op  : EQOP | LTOP | LEOP | GTOP | GEOP
+compare_op  : LTOP | LEOP | GTOP | GEOP
             ;
 
 simple_expression   : term                          { $$ = $1; }
@@ -146,7 +151,7 @@ else    : ELSE LPAREN statement_list RPAREN
 number  : var
         | NUMBERTOK
 
-term    : term times_op factor
+term    : term times_op factor  {$$ = binop($2,$1,$3);}
         | factor                { $$ = $1; }
         ;
 
@@ -390,7 +395,7 @@ int main()
     printf("yyparse result = %8d\n", res);
     
 //    if (DEBUG & DB_PARSERES) dbugprinttok(parseresult);
-    //dbugprinttok(parseresult);
+    dbugprinttok(parseresult);
     ppexpr(parseresult);           /* Pretty-print the result tree */
 //    gencode(parseresult, blockoffs[blocknumber], labelnumber);
     return 0;
