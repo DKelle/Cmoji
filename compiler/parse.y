@@ -72,7 +72,7 @@ TOKEN parseresult;
 %token DEF IF ELIF ELSE RET SLEEP FUNCTION HALT
 
 %%
-program : statement_list HALT   {parseresult = $1;}				
+program : statement_list   {parseresult = $1;}				
 		| temp_assign  {parseresult = $1; }
         | temp_compare {parseresult = $1; }
         | temp_add      {parseresult = $1;}
@@ -83,7 +83,7 @@ program : statement_list HALT   {parseresult = $1;}
 temp_if     : IF expression LPAREN statement RPAREN { $$ = cons($1, cons($2,$4));}
             ;
 
-temp_add    : NUMBERTOK add_op NUMBERTOK temp_add    {$$ = cons(binop($2,$1,$3), $4);}
+temp_add    : NUMBERTOK add_op temp_add    {$$ = binop($2,$1,$3);}
             | NUMBERTOK add_op NUMBERTOK {$$ = binop($2,$1,$3);}
             ;
 
@@ -178,7 +178,7 @@ print   : PRINT expression  {$$ = cons($1, $2); }
    are working.
   */
 
-#define DEBUG           0 	/* set bits here for debugging, 0 = off  */
+#define DEBUG           1 	/* set bits here for debugging, 0 = off  */
 
 #define DB_CONS       	1		/* bit to trace cons */
 #define DB_BINOP      	2		/* bit to trace binop */
