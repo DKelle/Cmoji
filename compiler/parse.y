@@ -73,29 +73,7 @@ TOKEN parseresult;
 
 %%
 program : statement_list   {parseresult = $1;}				
-		| temp_assign  {parseresult = $1; }
-        | temp_compare {parseresult = $1; }
-        | temp_add      {parseresult = $1;}
-        | temp_if       {parseresult = $1; }
-        | expression    {parseresult = $1;}
         ;
-
-temp_if     : IF expression LPAREN statement RPAREN { $$ = cons($1, cons($2,$4));}
-            ;
-
-temp_add    : NUMBERTOK add_op temp_add    {$$ = binop($2,$1,$3);}
-            | NUMBERTOK add_op NUMBERTOK {$$ = binop($2,$1,$3);}
-            ;
-
-temp_compare    : compare_op temp_compare   {$$ = cons($1,$2);}
-                | compare_op                {$$ = $1;}
-
-temp_assign     : IDENTIFIERTOK EQOP expression { $$ = binop($2, $1, $3); }
-                ;
-
-statement_list  : statement statement_list  {$$ = cons($1,$2);}
-                | statement                 { $$ = makestatement($1);  }
-                ;
 
 statement   : declaration
             | if
@@ -120,14 +98,14 @@ funcall     : FUNCALL IDENTIFIERTOK
             ;
 
 loop        : LOOP expression LPAREN statement_list RPAREN
-            | LOOP range LPAREN statement_list RPAREN       { $$ = makeloop($2, $3); }
+            | LOOP range LPAREN statement_list RPAREN       { $$ = binop($1, $2, $3); }
             | LOOP1 LPAREN statement_list RPAREN
             ;
 
 var         : IDENTIFIERTOK { $$ = $1; }
             ;
 
-expression  : expression compare_op simple_expression       { $$ = binop($2,$1,$3);}
+expression  : expression add_op simple_expression       { $$ = binop($2,$1,$3);}
             | simple_expression                         { $$ = $1; }
             ;
 
@@ -178,7 +156,7 @@ print   : PRINT expression  {$$ = cons($1, $2); }
    are working.
   */
 
-#define DEBUG           1 	/* set bits here for debugging, 0 = off  */
+#define DEBUG           0 	/* set bits here for debugging, 0 = off  */
 
 #define DB_CONS       	1		/* bit to trace cons */
 #define DB_BINOP      	2		/* bit to trace binop */
@@ -207,7 +185,6 @@ TOKEN makeloop(TOKEN range, TOKEN stmn )
 
 TOKEN makestatement(TOKEN statement)
 {
-    printf("Trying to make statement\n");
     return statement;
 }
 
