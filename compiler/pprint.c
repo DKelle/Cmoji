@@ -67,7 +67,7 @@ void printtok(TOKEN tok)             /* print a token in abbreviated form */
            break;
          case NUMBERTOK:
            switch (tok->datatype)
-             {case INTEGER: 
+             {case INTEGER:
                 printf ("%d", tok->intval);
                 break;
 	       }
@@ -112,14 +112,14 @@ void printexpr(TOKEN tok, int col)     /* print an expression in prefix form */
         dbugprinttok(tok);
       };
     if (tok->tokentype == OPERATOR)
-      { 
-        for (i = 0; i < col; i++) printf(" ");
+      {
+        //for (i = 0; i < col; i++) printf(" ");
         printf ("(%s", opprint[tok->whichval]);
         nextcol = col + 2 + opsize[tok->whichval];
         opnds = tok->operands;
 	start = 0;
 	while (opnds != NULL)
-	  { if (start == 0) 
+	  { if (start == 0)
 	       printf(" ");
 	       else { printf("\n");
 		      for (i = 0; i < nextcol; i++) printf(" ");
@@ -134,8 +134,8 @@ void printexpr(TOKEN tok, int col)     /* print an expression in prefix form */
         TOKEN next = tok->link;
         if(next)
         {
-          printf("\n");
-          printexpr(next, 0);
+//          printf("\n");
+//          printexpr(next, 0);
         }
       }
       else printtok(tok);

@@ -73,6 +73,7 @@ TOKEN parseresult;
 
 %%
 program : statement_list   {parseresult = $1;}				
+        | expression        {parseresult = $1;}
         ;
 
 statement   : declaration   { $$ = $1; }
@@ -124,7 +125,7 @@ compare_op  : LTOP | LEOP | GTOP | GEOP
             ;
 
 simple_expression   : term                          { $$ = $1; }
-                    | simple_expression add_op term 
+                    | simple_expression add_op term { $$ = binop($2,$1,$3);}
                     ;
 
 else    : ELSE LPAREN statement_list RPAREN
