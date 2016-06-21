@@ -105,13 +105,16 @@ void dbugprinttok(TOKEN tok)  /* print a token in 'nice' debugging form */
   }
 
 void printexpr(TOKEN tok, int col)     /* print an expression in prefix form */
-  { TOKEN opnds; int nextcol, start, i;
+  { TOKEN opnds; int nextcol, start, i, startcol;
+    startcol = col;
     if (PRINTEXPRDEBUG != 0)
       { printf ("printexpr: col %d\n", col);
         dbugprinttok(tok);
       };
     if (tok->tokentype == OPERATOR)
-      { printf ("(%s", opprint[tok->whichval]);
+      { 
+        for (i = 0; i < col; i++) printf(" ");
+        printf ("(%s", opprint[tok->whichval]);
         nextcol = col + 2 + opsize[tok->whichval];
         opnds = tok->operands;
 	start = 0;
@@ -128,6 +131,12 @@ void printexpr(TOKEN tok, int col)     /* print an expression in prefix form */
 	    opnds = opnds->link;
 	  }
         printf (")");
+        TOKEN next = tok->link;
+        if(next)
+        {
+          printf("\n");
+          printexpr(next, 0);
+        }
       }
       else printtok(tok);
   }

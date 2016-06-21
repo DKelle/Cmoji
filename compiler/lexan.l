@@ -159,7 +159,7 @@ int install_id()
     };
 
     yylval->stringval[n] = '\0';
-           printf("id  %10s   n = %4d\n", yytext, n); 
+    //printf("id  %10s   n = %4d\n", yytext, n); 
     return(IDENTIFIERTOK);
 }
 

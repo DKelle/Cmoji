@@ -75,7 +75,7 @@ TOKEN parseresult;
 program : statement_list   {parseresult = $1;}				
         ;
 
-statement   : declaration
+statement   : declaration   { $$ = $1; }
             | if
             | assignment    { $$ = makestatement($1); }
             | funcall
@@ -83,15 +83,19 @@ statement   : declaration
             | print         { $$ = $1; }
             ;
 
-declaration : DEF var
-            | DEF assignment
+statement_list  : statement statement_list  {$$ = cons($1,$2);}
+                | statement                 { $$ = makestatement($1);  }
+                ;
+
+declaration : DEF var           { $$ = NULL; }
+            | DEF assignment    { $$ = $2; }
             ;
 
 if          : IF expression LPAREN statement_list RPAREN
             | IF expression LPAREN statement_list RPAREN elif
             ;
 
-assignment  : var EQOP expression { $$ = $1; }
+assignment  : var EQOP expression { $$ = binop($2, $1, $3); }
             ;
 
 funcall     : FUNCALL IDENTIFIERTOK 
@@ -193,17 +197,11 @@ TOKEN cons(TOKEN item, TOKEN list)           /* add item to front of list */
     item->link = list;
     if (DEBUG & DB_CONS)
     { 
-	printf("cons\n");
+	   printf("cons\n");
         dbugprinttok(item);
         dbugprinttok(list);
     };
     return item;
-}
-
-TOKEN printsomething(TOKEN prgm)
-{
-	printf("got to here\n");
-    return prgm;
 }
 
 TOKEN binop(TOKEN op, TOKEN lhs, TOKEN rhs)        /* reduce binary operator */
