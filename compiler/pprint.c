@@ -105,7 +105,7 @@ void printexpr(TOKEN tok, int col)     /* print an expression in prefix form */
       { printf ("printexpr: col %d\n", col);
         dbugprinttok(tok);
       };
-    if (tok->tokentype == OPERATOR)
+    if (tok->tokentype == OPERATOR || tok->tokentype == RESERVED)
       {
         //for (i = 0; i < col; i++) printf(" ");
         printf ("(%s", opprint[tok->whichval]);

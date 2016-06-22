@@ -73,7 +73,8 @@ TOKEN parseresult;
 %token DEF IF ELIF ELSE RET SLEEP FUNCTION HALT
 
 %%
-program : statement_list   {parseresult = $1;}				
+program : statement_list   {parseresult = $1;}		
+        | print             {parseresult = $1;}        
         ;
 
 statement   : declaration   { $$ = $1; }
@@ -149,7 +150,7 @@ factor  : NUMBERTOK                 { $$ = $1; }
         | LPAREN expression RPAREN
         ;
 
-print   : PRINT expression  {$$ = cons($1, $2); }
+print   : PRINT expression  {$$ = binop($1, $2, NULL); }
         ;
 
 %%
@@ -220,7 +221,7 @@ TOKEN binop(TOKEN op, TOKEN lhs, TOKEN rhs)        /* reduce binary operator */
 
     op->operands = lhs;          /* link operands to operator       */
     lhs->link = rhs;             /* link second operand to first    */
-    rhs->link = NULL;            /* terminate operand list          */
+    if(rhs) rhs->link = NULL;            /* terminate operand list          */
     if (DEBUG & DB_BINOP)
     { 
 	printf("binop\n");
