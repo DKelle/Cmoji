@@ -65,6 +65,7 @@ TOKEN parseresult;
 
 %token PLUSOP MINUSOP TIMESOP DIVIDEOP                      /* operators */
 %token EQOP LTOP LEOP GEOP GTOP IFOP NEOP ANDOP OROP NOTOP
+%token GOTOOP LABELOP PROGNOP
 
 %token LPAREN RPAREN                                        /* Delimiters */
 
