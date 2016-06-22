@@ -34,8 +34,8 @@
 
 #define PRINTEXPRDEBUG 0     /* Set to 1 to print each node in printexpr */
 char* opprint[]  = {" ", "+", "-", "*", "/", "=", "<", "<=", ">=", ">",
-                   "if", "and", "or", "not", "goto", "label", "progn"};
-int opsize[] = {1,1,1,1,1,1,1,2,2,1,2,3,2,3,4,5,5};
+                   "if", "!=", "and", "or", "not", "goto", "label", "progn"};
+int opsize[] = {1,1,1,1,1,1,1,2,2,1,2,2,3,2,3,4,5,5};
 
 void debugprinttok(TOKEN tok)           /* print a token for debugging */
   { if (tok == NULL)

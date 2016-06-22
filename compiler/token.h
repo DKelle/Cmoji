@@ -49,20 +49,20 @@ typedef struct tokn {
 #define IDENTIFIERTOK   261
 #define NUMBERTOK       262
 
-#define LOOP        279 /* reserved numbers */
-#define LOOP1       280
-#define TO          281
-#define PRINT       282
-#define SILENCE     283
-#define FUNCALL     284
-#define DEF         285
-#define IF          286
-#define ELIF        287
-#define ELSE        288
-#define RET         289
-#define SLEEP       290
-#define FUNCTION    291
-#define HALT        292
+#define LOOP        282 /* reserved numbers */
+#define LOOP1       283
+#define TO          284
+#define PRINT       285
+#define SILENCE     286
+#define FUNCALL     287
+#define DEF         288
+#define IF          289
+#define ELIF        290
+#define ELSE        291
+#define RET         292
+#define SLEEP       293
+#define FUNCTION    294
+#define HALT        295
 #define RESERVED_BIAS   (LOOP - 1)
 
 #define PLUSOP          263 /* operator numbers */
@@ -79,12 +79,13 @@ typedef struct tokn {
 #define ANDOP           274
 #define OROP            275
 #define NOTOP           276
-#define GOTOOP          293
-#define LABELOP         294
+#define GOTOOP          277 
+#define LABELOP         278
+#define PROGNOP         279
 #define OPERATOR_BIAS   (PLUSOP - 1) 
 
-#define LPAREN  277 /* delimeter numbers */
-#define RPAREN  278
+#define LPAREN  280 /* delimeter numbers */
+#define RPAREN  281
 #define DELIMITER_BIAS (LPAREN - 1)
 
 #define INTEGER    	0	/* datatype numbers */
