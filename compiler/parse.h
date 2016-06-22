@@ -97,3 +97,5 @@ TOKEN talloc();
 TOKEN makeloop(TOKEN range, TOKEN stmn);
 
 TOKEN makestatement(TOKEN stmnt);
+
+TOKEN makeprogn(TOKEN tkn, TOKEN prog);

@@ -73,7 +73,6 @@ TOKEN parseresult;
 
 %%
 program : statement_list   {parseresult = $1;}				
-        | expression        {parseresult = $1;}
         ;
 
 statement   : declaration   { $$ = $1; }
@@ -84,7 +83,7 @@ statement   : declaration   { $$ = $1; }
             | print         { $$ = $1; }
             ;
 
-statement_list  : statement statement_list  {$$ = cons($1,$2);}
+statement_list  : statement statement_list  {$$ = makeprogn(copytok($1),cons($1,$2));}
                 | statement                 { $$ = makestatement($1);  }
                 ;
 
@@ -110,7 +109,7 @@ loop        : LOOP expression LPAREN statement_list RPAREN
 var         : IDENTIFIERTOK { $$ = $1; }
             ;
 
-expression  : expression add_op simple_expression       { $$ = binop($2,$1,$3);}
+expression  : expression compare_op simple_expression       { $$ = binop($2,$1,$3);}
             | simple_expression                         { $$ = $1; }
             ;
 
@@ -181,6 +180,16 @@ int labelnumber = 0;  /* sequential counter for internal label numbers */
 int labels[10000]; //use this so we can mape user defined label number -> internal label numbering
    /*  Note: you should add to the above values and insert debugging
        printouts in your routines similar to those that are shown here.     */
+
+TOKEN makeprogn(TOKEN tok, TOKEN statements)
+{
+    tok->tokentype = OPERATOR;
+    tok->whichval = PROGNOP - OPERATOR_BIAS;
+    printf("progn is %d\n", PROGNOP-OPERATOR_BIAS);  
+    tok->operands = statements;
+    return tok;
+}
+
 
 TOKEN makeloop(TOKEN range, TOKEN stmn )
 {
