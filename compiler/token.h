@@ -49,47 +49,57 @@ typedef struct tokn {
 #define IDENTIFIERTOK   261
 #define NUMBERTOK       262
 
-#define LOOP        282 /* reserved numbers */
-#define LOOP1       283
-#define TO          284
-#define PRINT       285
-#define SILENCE     286
-#define FUNCALL     287
-#define DEF         288
-#define IF          289
-#define ELIF        290
-#define ELSE        291
-#define RET         292
-#define SLEEP       293
-#define FUNCTION    294
-#define HALT        295
-#define RESERVED_BIAS   (LOOP - 1)
+#define OPERATOR 258
+#define DELIMETER 259
+#define RESERVED 260
+#define IDENTIFIERTOK 261
+#define NUMBERTOK 262
 
-#define PLUSOP          263 /* operator numbers */
-#define MINUSOP         264
-#define TIMESOP         265
-#define DIVIDEOP        266
-#define EQOP            267
-#define LTOP            268
-#define LEOP            269
-#define GEOP            270
-#define GTOP            271
-#define IFOP            272
-#define NEOP            273
-#define ANDOP           274
-#define OROP            275
-#define NOTOP           276
-#define GOTOOP          277 
-#define LABELOP         278
-#define PROGNOP         279
-#define OPERATOR_BIAS   (PLUSOP - 1) 
+#define PLUSOP 263
+#define MINUSOP 264
+#define TIMESOP 265
+#define DIVIDEOP 266
+#define EQOP 267
+#define LTOP 268
+#define LEOP 269
+#define GEOP 270
+#define GTOP 271
+#define IFOP 272
+#define ELIFOP 273
+#define ELSEOP 274
+#define NEOP 275
+#define ANDOP 276
+#define OROP 277
+#define NOTOP 278
+#define GOTOOP 279
+#define LABELOP 280
+#define PROGNOP 281
+#define SLEEPOP 282
+#define PRINTOP 283
+#define OPERATOR_BIAS   (PLUSOP - 1)
 
-#define LPAREN  280 /* delimeter numbers */
-#define RPAREN  281
+#define LPAREN 284
+#define RPAREN 285
 #define DELIMITER_BIAS (LPAREN - 1)
 
-#define INTEGER    	0	/* datatype numbers */
-#define IDENTIFIER	1
-#define NUMBER 		2
+#define LOOP 286
+#define LOOP1 287
+#define TO 288
+#define PRINT 289
+#define SILENCE 290
+#define FUNCALL 291
+#define DEF 292
+#define IF 293
+#define ELIF 294
+#define ELSE 295
+#define RET 296
+#define SLEEP 297
+#define FUNCTION 298
+#define HALT 299
+#define RESERVED_BIAS   (LOOP - 1)
 
-#define YYTOKENTYPE 0 
+#define INTEGER     0   /* datatype numbers */
+#define IDENTIFIER  1
+#define NUMBER      2
+
+#define YYTOKENTYPE 0
