@@ -5,7 +5,7 @@
 
 /* Token structure and constant definitions, assuming Bison token numbers */
 
-/* 
+/*
 ; This program is free software; you can redistribute it and/or modify
 ; it under the terms of the GNU General Public License as published by
 ; the Free Software Foundation; either version 2 of the License, or
@@ -49,12 +49,6 @@ typedef struct tokn {
 #define IDENTIFIERTOK   261
 #define NUMBERTOK       262
 
-#define OPERATOR 258
-#define DELIMETER 259
-#define RESERVED 260
-#define IDENTIFIERTOK 261
-#define NUMBERTOK 262
-
 #define PLUSOP 263
 #define MINUSOP 264
 #define TIMESOP 265
@@ -65,37 +59,35 @@ typedef struct tokn {
 #define GEOP 270
 #define GTOP 271
 #define IFOP 272
-#define ELIFOP 273
-#define ELSEOP 274
-#define NEOP 275
-#define ANDOP 276
-#define OROP 277
-#define NOTOP 278
-#define GOTOOP 279
-#define LABELOP 280
-#define PROGNOP 281
-#define SLEEPOP 282
-#define PRINTOP 283
+#define NEOP 273
+#define ANDOP 274
+#define OROP 275
+#define NOTOP 276
+#define GOTOOP 277
+#define LABELOP 278
+#define PROGNOP 279
+#define SLEEPOP 280
+#define PRINTOP 281
 #define OPERATOR_BIAS   (PLUSOP - 1)
 
-#define LPAREN 284
-#define RPAREN 285
+#define LPAREN 282
+#define RPAREN 283
 #define DELIMITER_BIAS (LPAREN - 1)
 
-#define LOOP 286
-#define LOOP1 287
-#define TO 288
-#define PRINT 289
-#define SILENCE 290
-#define FUNCALL 291
-#define DEF 292
-#define IF 293
-#define ELIF 294
-#define ELSE 295
-#define RET 296
-#define SLEEP 297
-#define FUNCTION 298
-#define HALT 299
+#define LOOP 284
+#define LOOP1 285
+#define TO 286
+#define PRINT 287
+#define SILENCE 288
+#define FUNCALL 289
+#define DEF 290
+#define IF 291
+#define ELIF 292
+#define ELSE 293
+#define RET 294
+#define SLEEP 295
+#define FUNCTION 296
+#define HALT 297
 #define RESERVED_BIAS   (LOOP - 1)
 
 #define INTEGER     0   /* datatype numbers */

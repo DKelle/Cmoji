@@ -150,7 +150,7 @@ factor  : NUMBERTOK                 { $$ = $1; }
         | LPAREN expression RPAREN
         ;
 
-print   : PRINT expression  {$$ = binop($1, $2, NULL); }
+print   : PRINT expression  {$$ = makeprint($1, $2); }
         ;
 
 %%
@@ -182,6 +182,15 @@ int labelnumber = 0;  /* sequential counter for internal label numbers */
 int labels[10000]; //use this so we can mape user defined label number -> internal label numbering
    /*  Note: you should add to the above values and insert debugging
        printouts in your routines similar to those that are shown here.     */
+
+
+TOKEN makeprint(TOKEN print, TOKEN operands)
+{
+	print->tokentype = OPERATOR;
+	print->whichval = PRINTOP - OPERATOR_BIAS;
+	print->operands = operands;
+	return print;
+}
 
 TOKEN makeprogn(TOKEN tok, TOKEN statements)
 {

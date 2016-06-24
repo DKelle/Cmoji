@@ -1,3 +1,6 @@
+/* returns a token with print as the op and operands as the operands */
+TOKEN makeprint(TOKEN print, TOKEN operatands);
+
 /* takes a token, and returs a token with the negated value */
 TOKEN negate(TOKEN tok);
 
