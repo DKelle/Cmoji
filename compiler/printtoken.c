@@ -30,7 +30,7 @@
 
 
 static char* opprnt[]  = {" ", "+", "-", "*", "/", "=", "<", "<=",
-                              ">=", ">", "if", "and", "or", "not", "goto", "label", "progn"};
+                              ">=", ">", "if", "and", "or", "not", "goto", "label", "progn", "sleep", "print"};
 
 static char *delprnt[] = { "  ", " (", " )"} ;
 
@@ -40,12 +40,12 @@ static char *resprnt[] = {"", "loop","loop1","to","print","silence",
 
 
 TOKEN talloc()           /* allocate a new token record */
-{ 
+{
     TOKEN tok;
     tok = (TOKEN) calloc(1,sizeof(struct tokn));
     if ( tok != NULL ) return (tok);
        else printf("talloc failed.");
-    return tok;  
+    return tok;
 }
 
 void printtoken(TOKEN tok)
