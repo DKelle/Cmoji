@@ -64,7 +64,7 @@ TOKEN parseresult;
 %token OPERATOR DELIMETER RESERVED IDENTIFIERTOK NUMBERTOK  /* token types */
 
 %token PLUSOP MINUSOP TIMESOP DIVIDEOP                      /* operators */
-%token EQOP LTOP LEOP GEOP GTOP IFOP NEOP ANDOP OROP NOTOP
+%token EQOP LTOP LEOP GEOP GTOP IFOP ELIFOP ELSEOP NEOP ANDOP OROP NOTOP
 %token GOTOOP LABELOP STATEMENTOP SLEEPOP PRINTOP
 
 %token LPAREN RPAREN                                        /* Delimiters */
@@ -111,20 +111,21 @@ expression  : expression compare_op simple_expression       { $$ = binop($2,$1,$
             ;
 
 elif        : ELIF expression LPAREN statement_list RPAREN      { $$ = makeelif($1, $2, $4, NULL); }
+            | ELIF expression LPAREN statement_list RPAREN elif { $$ = makeelif($1, $2, $4, $6); }
             | ELIF expression LPAREN statement_list RPAREN else { $$ = makeelif($1, $2, $4, $6); }
             ;
 
 range       : number TO number  { $$ = cons($1, $3); }
             ;
 
-compare_op  : LTOP | LEOP | GTOP | GEOP
+compare_op  : LTOP | LEOP | GTOP | GEOP | EQOP
             ;
 
 simple_expression   : term                          { $$ = $1; }
                     | simple_expression add_op term { $$ = binop($2,$1,$3);}
                     ;
 
-else    : ELSE LPAREN statement_list RPAREN
+else    : ELSE LPAREN statement_list RPAREN         { $$ = $3; }
         ;
 
 number  : var
@@ -141,7 +142,7 @@ times_op    : TIMESOP | DIVIDEOP | ANDOP
             ;
 
 factor  : NUMBERTOK                 { $$ = $1; }
-        | var
+        | var                       { $$ = $1; }
         | LPAREN expression RPAREN
         ;
 
@@ -157,7 +158,7 @@ print   : PRINT expression  {$$ = makeprint($1, $2); }
    are working.
   */
 
-#define DEBUG           DB_MAKEIF 	/* set bits here for debugging, 0 = off  */
+#define DEBUG           0 	/* set bits here for debugging, 0 = off  */
 
 #define DB_CONS       	1		/* bit to trace cons */
 #define DB_BINOP      	2		/* bit to trace binop */
@@ -235,8 +236,6 @@ TOKEN makeif(TOKEN tok, TOKEN exp, TOKEN thenpart, TOKEN elsepart)
         dbugprinttok(elsepart);
     
     }
-    printf("else part is \n");
-    ppexpr(elsepart);
     return tok;
 }
 
@@ -244,7 +243,7 @@ TOKEN makeif(TOKEN tok, TOKEN exp, TOKEN thenpart, TOKEN elsepart)
 TOKEN makeelif(TOKEN tok, TOKEN exp, TOKEN thenpart, TOKEN elsepart)
 {
     tok->tokentype = OPERATOR;
-    tok->whichval = IFOP - OPERATOR_BIAS;
+    tok->whichval = ELIFOP - OPERATOR_BIAS;
     if (elsepart != NULL) elsepart->link = NULL;
     thenpart->link = elsepart;
     exp->link = thenpart;
