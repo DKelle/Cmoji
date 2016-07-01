@@ -42,6 +42,13 @@ TOKEN makeop(int opnum);
 /* copytok makes a new token that is a copy of origtok */
 TOKEN copytok(TOKEN origtok);
 
+/* takes in a statment and a statment list, and links them together */
+TOKEN makestatements(TOKEN stmnt1, TOKEN stmnt2);
+
+/* makelif makes an ELIF operator and links it to its arguments.
+   tok is a (now) unused token that is recycled to become an IFOP operator */
+TOKEN makeelif(TOKEN tok, TOKEN exp, TOKEN thenpart, TOKEN elsepart);
+
 /* makeif makes an IF operator and links it to its arguments.
    tok is a (now) unused token that is recycled to become an IFOP operator */
 TOKEN makeif(TOKEN tok, TOKEN exp, TOKEN thenpart, TOKEN elsepart);
@@ -99,6 +106,4 @@ TOKEN talloc();
 
 TOKEN makeloop(TOKEN range, TOKEN stmn);
 
-TOKEN makestatement(TOKEN stmnt);
-
-TOKEN makeprogn(TOKEN tkn, TOKEN prog);
+TOKEN makestatement(TOKEN tkn, TOKEN prog);

@@ -30,7 +30,7 @@
 
 
 static char* opprnt[]  = {" ", "+", "-", "*", "/", "=", "<", "<=",
-                              ">=", ">", "if", "and", "or", "not", "goto", "label", "progn", "sleep", "print"};
+                              ">=", ">", "if", "and", "or", "not", "goto", "label", "statement", "sleep", "print"};
 
 static char *delprnt[] = { "  ", " (", " )"} ;
 

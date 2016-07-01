@@ -65,7 +65,7 @@ typedef struct tokn {
 #define NOTOP 276
 #define GOTOOP 277
 #define LABELOP 278
-#define PROGNOP 279
+#define STATEMENTOP 279
 #define SLEEPOP 280
 #define PRINTOP 281
 #define OPERATOR_BIAS   (PLUSOP - 1)

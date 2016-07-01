@@ -65,7 +65,7 @@ TOKEN parseresult;
 
 %token PLUSOP MINUSOP TIMESOP DIVIDEOP                      /* operators */
 %token EQOP LTOP LEOP GEOP GTOP IFOP NEOP ANDOP OROP NOTOP
-%token GOTOOP LABELOP PROGNOP SLEEPOP PRINTOP
+%token GOTOOP LABELOP STATEMENTOP SLEEPOP PRINTOP
 
 %token LPAREN RPAREN                                        /* Delimiters */
 
@@ -74,27 +74,22 @@ TOKEN parseresult;
 
 %%
 program : statement_list   {parseresult = $1;}		
-        | print             {parseresult = $1;}        
         ;
 
-statement   : declaration   { $$ = $1; }
-            | if
-            | assignment    { $$ = makestatement($1); }
-            | funcall
+statement   : if            { $$ = $1; }
+            | elif          { $$ = $1; }
+            | assignment    { $$ = $1; }
+            | funcall       { $$ = $1; }
             | loop          { $$ = $1; }
             | print         { $$ = $1; }
             ;
 
-statement_list  : statement statement_list  {$$ = makeprogn(copytok($1),cons($1,$2));}
-                | statement                 { $$ = makestatement($1);  }
+statement_list  : statement statement_list  {$$ = makestatements($1, $2);}
+                | statement                 { $$ = $1;  }
                 ;
 
-declaration : DEF var           { $$ = NULL; }
-            | DEF assignment    { $$ = $2; }
-            ;
-
-if          : IF expression LPAREN statement_list RPAREN
-            | IF expression LPAREN statement_list RPAREN elif
+if          : IF expression LPAREN statement_list RPAREN        { $$ = makeif($1, $2, $4, NULL); }
+            | IF expression LPAREN statement_list RPAREN elif   { $$ = makeif($1, $2, $4, $6); }
             ;
 
 assignment  : var EQOP expression { $$ = binop($2, $1, $3); }
@@ -115,8 +110,8 @@ expression  : expression compare_op simple_expression       { $$ = binop($2,$1,$
             | simple_expression                         { $$ = $1; }
             ;
 
-elif        : ELIF expression LPAREN statement_list RPAREN
-            | ELIF expression LPAREN statement_list RPAREN else
+elif        : ELIF expression LPAREN statement_list RPAREN      { $$ = makeelif($1, $2, $4, NULL); }
+            | ELIF expression LPAREN statement_list RPAREN else { $$ = makeelif($1, $2, $4, $6); }
             ;
 
 range       : number TO number  { $$ = cons($1, $3); }
@@ -162,7 +157,7 @@ print   : PRINT expression  {$$ = makeprint($1, $2); }
    are working.
   */
 
-#define DEBUG           0 	/* set bits here for debugging, 0 = off  */
+#define DEBUG           DB_MAKEIF 	/* set bits here for debugging, 0 = off  */
 
 #define DB_CONS       	1		/* bit to trace cons */
 #define DB_BINOP      	2		/* bit to trace binop */
@@ -183,7 +178,28 @@ int labels[10000]; //use this so we can mape user defined label number -> intern
    /*  Note: you should add to the above values and insert debugging
        printouts in your routines similar to those that are shown here.     */
 
+/* takes in a statement and a statment list, and links them together */
+TOKEN makestatements(TOKEN stmnt1, TOKEN stmnt2)
+{
+    TOKEN tok = talloc();
+    //it is possible that stmnt2 already has a statement 
+    //if so, then we don't need to create one, otherwise we do
+    if(stmnt2->tokentype == OPERATOR && stmnt2->whichval == STATEMENTOP - OPERATOR_BIAS)
+    {
+        printf("stmnt2 is a progn\n");
+        tok = stmnt2->operands;
+        stmnt2->operands = stmnt1;
+        stmnt1->link = tok;
+        tok = stmnt2;
+    }
+    else
+    {
+        tok = makestatement(talloc(), cons(stmnt1, stmnt2));
+    }   
+    return tok;
+}
 
+/* Takes in the print token, and creates a PRINTOP token */
 TOKEN makeprint(TOKEN print, TOKEN operands)
 {
 	print->tokentype = OPERATOR;
@@ -192,25 +208,62 @@ TOKEN makeprint(TOKEN print, TOKEN operands)
 	return print;
 }
 
-TOKEN makeprogn(TOKEN tok, TOKEN statements)
+/* Used as a filler operator, which can act on two sequential operations */
+TOKEN makestatement(TOKEN tok, TOKEN statements)
 {
     tok->tokentype = OPERATOR;
-    tok->whichval = PROGNOP - OPERATOR_BIAS;
-    printf("progn is %d\n", PROGNOP-OPERATOR_BIAS);  
+    tok->whichval = STATEMENTOP - OPERATOR_BIAS;
     tok->operands = statements;
     return tok;
 }
 
+/* Takes in an if, the condition, and an else, and creates an AST */
+TOKEN makeif(TOKEN tok, TOKEN exp, TOKEN thenpart, TOKEN elsepart)
+{
+    tok->tokentype = OPERATOR;  /* Make it look like an operator   */
+    tok->whichval = IFOP - OPERATOR_BIAS;
+    if (elsepart != NULL) elsepart->link = NULL;
+    thenpart->link = elsepart;
+    exp->link = thenpart;
+    tok->operands = exp;
+    if (DEBUG & DB_MAKEIF)
+    {
+        printf("makeif\n");
+        dbugprinttok(tok);
+        dbugprinttok(exp);
+        dbugprinttok(thenpart);
+        dbugprinttok(elsepart);
+    
+    }
+    printf("else part is \n");
+    ppexpr(elsepart);
+    return tok;
+}
+
+/* Takes in an elif, the condition, and an else, and creates an AST */
+TOKEN makeelif(TOKEN tok, TOKEN exp, TOKEN thenpart, TOKEN elsepart)
+{
+    tok->tokentype = OPERATOR;
+    tok->whichval = IFOP - OPERATOR_BIAS;
+    if (elsepart != NULL) elsepart->link = NULL;
+    thenpart->link = elsepart;
+    exp->link = thenpart;
+    tok->operands = exp;
+    if (DEBUG & DB_MAKEIF)
+    {
+        printf("make elif\n");
+        dbugprinttok(exp);
+        dbugprinttok(thenpart);
+        dbugprinttok(elsepart);
+    
+    }
+    return tok;
+}
 
 TOKEN makeloop(TOKEN range, TOKEN stmn )
 {
     range->operands = stmn;
     return range;
-}
-
-TOKEN makestatement(TOKEN statement)
-{
-    return statement;
 }
 
 TOKEN cons(TOKEN item, TOKEN list)           /* add item to front of list */
@@ -240,27 +293,6 @@ TOKEN binop(TOKEN op, TOKEN lhs, TOKEN rhs)        /* reduce binary operator */
     };
     return op;
 }
-
-TOKEN makeif(TOKEN tok, TOKEN exp, TOKEN thenpart, TOKEN elsepart)
-{  
-    tok->tokentype = OPERATOR;  /* Make it look like an operator   */
-    tok->whichval = IFOP;
-    if (elsepart != NULL) elsepart->link = NULL;
-    thenpart->link = elsepart;
-    exp->link = thenpart;
-    tok->operands = exp;
-    if (DEBUG & DB_MAKEIF)
-    { 
-	printf("makeif\n");
-        dbugprinttok(tok);
-        dbugprinttok(exp);
-        dbugprinttok(thenpart);
-        dbugprinttok(elsepart);
-    };
-    return tok;
-}
-
-
 
 /* dogoto is the action for a goto statement.      
    tok is a (now) unused token that is recycled. */
