@@ -125,7 +125,7 @@ simple_expression   : term                          { $$ = $1; }
                     | simple_expression add_op term { $$ = binop($2,$1,$3);}
                     ;
 
-else    : ELSE LPAREN statement_list RPAREN         { $$ = $3; }
+else    : ELSE LPAREN statement_list RPAREN         { $$ = makeelse($1, $3); }
         ;
 
 number  : var
@@ -143,7 +143,7 @@ times_op    : TIMESOP | DIVIDEOP | ANDOP
 
 factor  : NUMBERTOK                 { $$ = $1; }
         | var                       { $$ = $1; }
-        | LPAREN expression RPAREN
+        | LPAREN expression RPAREN  { $$ = $2; }
         ;
 
 print   : PRINT expression  {$$ = makeprint($1, $2); }
@@ -236,6 +236,15 @@ TOKEN makeif(TOKEN tok, TOKEN exp, TOKEN thenpart, TOKEN elsepart)
         dbugprinttok(elsepart);
     
     }
+    return tok;
+}
+
+/* Takes in a statement, and sets it as the operands of an ELSEOP */
+TOKEN makeelse(TOKEN tok, TOKEN stmnt)
+{
+    tok->tokentype = OPERATOR;
+    tok->whichval = ELSEOP - OPERATOR_BIAS;
+    tok->operands = stmnt;
     return tok;
 }
 

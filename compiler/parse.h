@@ -45,6 +45,9 @@ TOKEN copytok(TOKEN origtok);
 /* takes in a statment and a statment list, and links them together */
 TOKEN makestatements(TOKEN stmnt1, TOKEN stmnt2);
 
+/* makeelse takes in a statmentlist, and sets it as the operands of an ELSEOP */
+TOKEN makeelse(TOKEN tok, TOKEN stmnt);
+
 /* makelif makes an ELIF operator and links it to its arguments.
    tok is a (now) unused token that is recycled to become an IFOP operator */
 TOKEN makeelif(TOKEN tok, TOKEN exp, TOKEN thenpart, TOKEN elsepart);

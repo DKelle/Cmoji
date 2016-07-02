@@ -59,35 +59,37 @@ typedef struct tokn {
 #define GEOP 270
 #define GTOP 271
 #define IFOP 272
-#define NEOP 273
-#define ANDOP 274
-#define OROP 275
-#define NOTOP 276
-#define GOTOOP 277
-#define LABELOP 278
-#define STATEMENTOP 279
-#define SLEEPOP 280
-#define PRINTOP 281
+#define ELIFOP 273
+#define ELSEOP 274
+#define NEOP 275
+#define ANDOP 276
+#define OROP 277
+#define NOTOP 278
+#define GOTOOP 279
+#define LABELOP 280
+#define STATEMENTOP 281
+#define SLEEPOP 282
+#define PRINTOP 283
 #define OPERATOR_BIAS   (PLUSOP - 1)
 
-#define LPAREN 282
-#define RPAREN 283
+#define LPAREN 284
+#define RPAREN 285
 #define DELIMITER_BIAS (LPAREN - 1)
 
-#define LOOP 284
-#define LOOP1 285
-#define TO 286
-#define PRINT 287
-#define SILENCE 288
-#define FUNCALL 289
-#define DEF 290
-#define IF 291
-#define ELIF 292
-#define ELSE 293
-#define RET 294
-#define SLEEP 295
-#define FUNCTION 296
-#define HALT 297
+#define LOOP 286
+#define LOOP1 287
+#define TO 288
+#define PRINT 289
+#define SILENCE 290
+#define FUNCALL 291
+#define DEF 292
+#define IF 293
+#define ELIF 294
+#define ELSE 295
+#define RET 296
+#define SLEEP 297
+#define FUNCTION 298
+#define HALT 299
 #define RESERVED_BIAS   (LOOP - 1)
 
 #define INTEGER     0   /* datatype numbers */
