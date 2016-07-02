@@ -78,9 +78,16 @@ TOKEN makegoto(int label);
    tok is a (now) unused token that is recycled. */
 TOKEN makefuncall(TOKEN tok, TOKEN fn, TOKEN args);
 
-/* makewhile makes structures for a while statement.
+/* Takes in a register number, and creates a var token using that reg */
+TOKEN makevartok(int reg);
+
+/* makerangeloop makes structures for a while statement that uses arange.
    tok and tokb are (now) unused tokens that are recycled. */
-TOKEN makewhile(TOKEN tok, TOKEN expr, TOKEN tokb, TOKEN statement);
+TOKEN makerangeloop(TOKEN tok, TOKEN range, TOKEN tokb, TOKEN statement);
+
+/* makeloop makes structures for a while statement.
+   tok and tokb are (now) unused tokens that are recycled. */
+TOKEN makeloop(TOKEN tok, TOKEN expr, TOKEN tokb, TOKEN statement);
 
 /* makefor makes structures for a for statement.
    sign is 1 for normal loop, -1 for downto.
@@ -106,7 +113,5 @@ TOKEN makeconst(TOKEN sign, TOKEN tok);
 
 /* talloc allocates a new TOKEN record. */
 TOKEN talloc();
-
-TOKEN makeloop(TOKEN range, TOKEN stmn);
 
 TOKEN makestatement(TOKEN tkn, TOKEN prog);

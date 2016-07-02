@@ -83,8 +83,8 @@ statement   : if            { $$ = $1; }
             | print         { $$ = $1; }
             ;
 
-statement_list  : statement statement_list  {$$ = makestatements($1, $2);}
-                | statement                 { $$ = $1;  }
+statement_list  : statement statement_list  { $$ = makestatements($1, $2);}
+                | statement                 { $$ = makestatements($1, NULL);  }
                 ;
 
 if          : IF expression LPAREN statement_list RPAREN        { $$ = makeif($1, $2, $4, NULL); }
@@ -97,8 +97,8 @@ assignment  : var EQOP expression { $$ = binop($2, $1, $3); }
 funcall     : FUNCALL IDENTIFIERTOK 
             ;
 
-loop        : LOOP expression LPAREN statement_list RPAREN  { $$ = makewhile($1, $2, $3, $4); }
-            | LOOP range LPAREN statement_list RPAREN       { $$ = binop($1, $2, $3); }
+loop        : LOOP expression LPAREN statement_list RPAREN  { $$ = makeloop($1, $2, $3, $4); }
+            | LOOP range LPAREN statement_list RPAREN       { $$ = makerangeloop($1, $2, $3, $4); }
             | LOOP1 LPAREN statement_list RPAREN
             ;
 
@@ -178,15 +178,20 @@ int labels[10000]; //use this so we can mape user defined label number -> intern
    /*  Note: you should add to the above values and insert debugging
        printouts in your routines similar to those that are shown here.     */
 
+
+/* define the reserved registers */
+#define COUNTERREG 10
+#define PRINTREG 11
+
+
 /* takes in a statement and a statment list, and links them together */
 TOKEN makestatements(TOKEN stmnt1, TOKEN stmnt2)
 {
     TOKEN tok = talloc();
     //it is possible that stmnt2 already has a statement 
     //if so, then we don't need to create one, otherwise we do
-    if(stmnt2->tokentype == OPERATOR && stmnt2->whichval == STATEMENTOP - OPERATOR_BIAS)
+    if(stmnt2 && stmnt2->tokentype == OPERATOR && stmnt2->whichval == STATEMENTOP - OPERATOR_BIAS)
     {
-        printf("stmnt2 is a progn\n");
         tok = stmnt2->operands;
         stmnt2->operands = stmnt1;
         stmnt1->link = tok;
@@ -267,15 +272,47 @@ TOKEN makeelif(TOKEN tok, TOKEN exp, TOKEN thenpart, TOKEN elsepart)
     return tok;
 }
 
-TOKEN makeloop(TOKEN range, TOKEN stmn )
+/* makerangeloop makes structures for a while statement using a range.
+   tok and tokb are (now) unused tokens that are recycled. */
+TOKEN makerangeloop(TOKEN tok, TOKEN range, TOKEN tokb, TOKEN statement)
 {
-    range->operands = stmn;
-    return range;
+    //create the expression from the given range (num1 < num2)
+    TOKEN start = makevartok(COUNTERREG);
+    TOKEN end = range->link;
+    dbugprinttok(end);
+    TOKEN le = makeoperatortok(LTOP);
+    TOKEN expr = binop(le, start, end);
+
+    //now we have to make sure we initialize the counter var
+    TOKEN val = copytok(range);
+    TOKEN eq = makeoperatortok(EQOP);
+    TOKEN init = binop(eq, copytok(start), val);
+
+    //before we make the loop, add an increment to the end of 'statement'
+    TOKEN temp = statement->operands;
+    TOKEN plus = makeoperatortok(PLUSOP);
+    TOKEN one = makenumbertok(1);
+    TOKEN addition = binop(plus, copytok(start), one);
+    TOKEN inc = binop(copytok(eq), copytok(start), addition);
+    while(temp->link)
+    {
+        temp = temp->link;
+    }
+    temp->link = inc;
+
+    //Now create the loop using the created expr, and the new statement
+    TOKEN loop = makeloop(tok, expr, tokb, statement);
+
+    //insert the init between the 'statement' and 'label' of the loop
+    TOKEN label = loop->operands;
+    init->link = label;
+    loop->operands = init;
+    return loop;
 }
 
-/* makewhile makes structures for a while statement.
+/* makeloop makes structures for a while statement.
    tok and tokb are (now) unused tokens that are recycled. */
-TOKEN makewhile(TOKEN tok, TOKEN expr, TOKEN tokb, TOKEN statement)
+TOKEN makeloop(TOKEN tok, TOKEN expr, TOKEN tokb, TOKEN statement)
 {
     //create the label and goto that we will jump back to
     TOKEN label = makelabel();
@@ -293,14 +330,24 @@ TOKEN makewhile(TOKEN tok, TOKEN expr, TOKEN tokb, TOKEN statement)
     TOKEN iftok = makeif(tokb, expr, statement, NULL);
 
     label->link = iftok;
-
+    
     temp = copytok(tok);
     TOKEN prog = makestatement(temp, label);
 
     return prog;
 }
 
-
+/* Takes in a register number, and creates a var token using that reg */
+TOKEN makevartok(int reg)
+{
+    TOKEN tok = talloc();
+    tok->tokentype = IDENTIFIERTOK;
+ 
+    char buf[10];
+    sprintf(buf, "var%d", reg);
+    strcpy(tok->stringval, buf);
+    return tok;
+}
 
 TOKEN cons(TOKEN item, TOKEN list)           /* add item to front of list */
 {
