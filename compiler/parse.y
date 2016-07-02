@@ -77,7 +77,6 @@ program : statement_list   {parseresult = $1;}
         ;
 
 statement   : if            { $$ = $1; }
-            | elif          { $$ = $1; }
             | assignment    { $$ = $1; }
             | funcall       { $$ = $1; }
             | loop          { $$ = $1; }
@@ -98,7 +97,7 @@ assignment  : var EQOP expression { $$ = binop($2, $1, $3); }
 funcall     : FUNCALL IDENTIFIERTOK 
             ;
 
-loop        : LOOP expression LPAREN statement_list RPAREN
+loop        : LOOP expression LPAREN statement_list RPAREN  { $$ = makewhile($1, $2, $3, $4); }
             | LOOP range LPAREN statement_list RPAREN       { $$ = binop($1, $2, $3); }
             | LOOP1 LPAREN statement_list RPAREN
             ;
@@ -274,6 +273,35 @@ TOKEN makeloop(TOKEN range, TOKEN stmn )
     return range;
 }
 
+/* makewhile makes structures for a while statement.
+   tok and tokb are (now) unused tokens that are recycled. */
+TOKEN makewhile(TOKEN tok, TOKEN expr, TOKEN tokb, TOKEN statement)
+{
+    //create the label and goto that we will jump back to
+    TOKEN label = makelabel();
+    TOKEN gototok = makegoto(label->operands->intval);
+
+    //put the goto at the end of the statementlist
+    TOKEN temp = statement->operands;
+    while(temp->link != NULL)
+    {
+        temp = temp->link;
+    
+    }
+    temp->link = gototok;
+    //Use the condition we just made to create the iftok
+    TOKEN iftok = makeif(tokb, expr, statement, NULL);
+
+    label->link = iftok;
+
+    temp = copytok(tok);
+    TOKEN prog = makestatement(temp, label);
+
+    return prog;
+}
+
+
+
 TOKEN cons(TOKEN item, TOKEN list)           /* add item to front of list */
 {
     item->link = list;
@@ -338,7 +366,7 @@ TOKEN makelabel()
 {
     TOKEN tok = talloc();
     tok->tokentype = OPERATOR;
-    tok->whichval = LABELOP;
+    tok->whichval = LABELOP - OPERATOR_BIAS;
 
     //Make sure that this actually instals the operands
     instlabel(tok);
@@ -403,7 +431,7 @@ TOKEN makeoperatortok(int val)
     TOKEN tok = talloc();
     tok->tokentype = OPERATOR;
     tok->datatype = INTEGER;
-    tok->whichval = val;
+    tok->whichval = val - OPERATOR_BIAS;
     return tok;
 }
 

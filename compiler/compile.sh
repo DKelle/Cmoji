@@ -1,6 +1,4 @@
 javac preprocessor.java
-java preprocessor < simple.cmj 
-make lexer
-./lexer < preprocessed.txt
+java preprocessor < cmj/prog.cmj 
 make parser
 ./parser < preprocessed.txt
