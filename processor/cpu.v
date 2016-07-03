@@ -150,7 +150,7 @@ module main();
   
     //Decide which instructions we should be dispatching
     wire[31:0]dispatching_inst_0 = (IBqsize == 0 && fetchReady) ? (fetchOut << 16 | fetchOutpc) :
-                                   (IBqsize != 0) ? IBq[IBqhead] : (16'h7000 << 16);
+                                   (IBqsize != 0) ? IBq[IBqhead] : (16'hf000 << 16);
 
     wire [2:0]dispatch_destination_0 = (!reservation_valid(branch_rs)) ?
                ((is_ld(dispatching_inst_0)||is_ldr(dispatching_inst_0))&&(~reservation_valid(ld_rs_0)||
@@ -168,12 +168,8 @@ module main();
     wire[31:0]dispatching_inst_1 =  (dispatch_destination_0 > 0) ?
                                     ((IBqsize == 0 && fetchReady1) ? (fetchOut1 << 16 | fetchOutpc1) :
                                     (IBqsize == 1 && fetchReady) ? (fetchOut << 16 | fetchOutpc) :
-                                    (IBqsize > 1) ? IBq[IBqhead+1] : (16'h7000 << 16)) : (16'h7000 << 16);
+                                    (IBqsize > 1) ? IBq[IBqhead+1] : (16'h7000 << 16)) : (16'hf000 << 16);
 
-
-    wire printtemp = is_print(dispatching_inst_1); 
-    wire printtemp1 = ~(dispatch_destination_0==6);
-    wire printtemp2 = (~reservation_valid(print_rs)||~(print_next_is_src_0|print_next_is_src_1));
 
     //After we have found the correct instruction, decide where it needs to be dispatched 
     wire [2:0]dispatch_destination_1 = (branch_rs_open) ?                                                                                   
@@ -377,8 +373,6 @@ module main();
 
     wire [15:0]fxu_0_next_waiting_on_0 = (is_rs_src_or_data_0(fxu_0_entry)&&fxu_0_src_0_on_cdb[16]) ? fxu_0_src_0_on_cdb[15:0] : waiting_on_0(fxu_0_entry);
     wire [15:0]fxu_0_next_waiting_on_1 = (is_rs_src_or_data_1(fxu_0_entry)&&fxu_0_src_1_on_cdb[16]) ? fxu_0_src_1_on_cdb[15:0] : waiting_on_1(fxu_0_entry);
-    wire [15:0] temp_waiting_on = waiting_on_0(fxu_0_entry);
-    wire temp_is_src = is_rs_src_or_data_0(fxu_0_entry);
     wire fxu_0_next_is_src_0 = (is_rs_src_or_data_0(fxu_0_entry)&&~fxu_0_src_0_on_cdb[16]);
     wire fxu_0_next_is_src_1 = (is_rs_src_or_data_1(fxu_0_entry)&&~fxu_0_src_1_on_cdb[16]);
     //the 17 bits data wires are 1 valid bit and 16 data bits
@@ -390,6 +384,8 @@ module main();
     //decide what our final data looks like
     wire [16:0]fxu_0_data = (is_add(fxu_0_entry[31:0])) ? (((fxu_0_data_0[16] && fxu_0_data_1[16])<<16) | 
 							   ((fxu_0_data_0[15:0] + fxu_0_data_1[15:0]))) :
+                            (is_sub(fxu_0_entry[31:0])) ? (((fxu_0_data_0[16] && fxu_0_data_1[16])<<16) |
+                               ((fxu_0_data_0[15:0] - fxu_0_data_1[15:0]))) :
 							  (fxu_0_data_2);
 
 //Execute FXU 1
@@ -425,6 +421,8 @@ module main();
     //decide what our final data looks like
     wire [16:0]fxu_1_data = (is_add(fxu_1_entry[31:0])) ? (((fxu_1_data_0[16] && fxu_1_data_1[16])<<16) |
                                                            ((fxu_1_data_0[15:0] + fxu_1_data_1[15:0]))) :
+                            (is_sub(fxu_1_entry[31:0])) ? (((fxu_1_data_0[16] && fxu_1_data_1[16])<<16) |
+                                                           ((fxu_1_data_0[15:0] - fxu_1_data_1[15:0]))) :
                                                           (fxu_1_data_2);
 
 //Branch Unit
@@ -961,8 +959,14 @@ module main();
 
     //Tell in an instruction is mov
     function is_add;
-	input[31:0]IBq_data;
-	is_add = IBq_data[31:28] == 1;
+    	input[31:0]IBq_data;
+    	is_add = IBq_data[31:28] == 1;
+    endfunction
+    
+    //Tell in an instruction is sub
+    function is_sub;
+        input[31:0]IBq_data;
+        is_sub = IBq_data[31:28] == 7;
     endfunction
 
     //Tell in an instruction is jmp   
@@ -1003,12 +1007,12 @@ module main();
 
     function is_fx;
 	input[31:0]IBq_data;
-	is_fx = (is_add(IBq_data) || is_mov(IBq_data));
+	is_fx = (is_add(IBq_data) || is_sub(IBq_data) || is_mov(IBq_data));
     endfunction
 
     function has_two_src;
 	input [31:0]IBq_data;
-	has_two_src = (is_add(IBq_data) || is_ldr(IBq_data) || is_jeq(IBq_data) || is_print(IBq_data));
+	has_two_src = (is_add(IBq_data) || is_sub(IBq_data) || is_ldr(IBq_data) || is_jeq(IBq_data) || is_print(IBq_data));
     endfunction
 
     function [3:0]get_dest;

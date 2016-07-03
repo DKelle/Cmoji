@@ -8,3 +8,7 @@ compiler/*.class
 compiler/*.txt
 lex.yy.*
 lexer
+*~
+*.o
+*.raw
+*.vcd
