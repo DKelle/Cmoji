@@ -386,6 +386,10 @@ module main();
 							   ((fxu_0_data_0[15:0] + fxu_0_data_1[15:0]))) :
                             (is_sub(fxu_0_entry[31:0])) ? (((fxu_0_data_0[16] && fxu_0_data_1[16])<<16) |
                                ((fxu_0_data_0[15:0] - fxu_0_data_1[15:0]))) :
+                            (is_mul(fxu_0_entry[31:0])) ? (((fxu_0_data_0[16] && fxu_0_data_1[16])<<16) |
+                                ((fxu_0_data_0[15:0] * fxu_0_data_1[15:0]))) :
+                            (is_div(fxu_0_entry[31:0])) ? (((fxu_0_data_0[16] && fxu_0_data_1[16])<<16) |
+                                ((fxu_0_data_0[15:0] / fxu_0_data_1[15:0]))) :
 							  (fxu_0_data_2);
 
 //Execute FXU 1
@@ -423,6 +427,10 @@ module main();
                                                            ((fxu_1_data_0[15:0] + fxu_1_data_1[15:0]))) :
                             (is_sub(fxu_1_entry[31:0])) ? (((fxu_1_data_0[16] && fxu_1_data_1[16])<<16) |
                                                            ((fxu_1_data_0[15:0] - fxu_1_data_1[15:0]))) :
+                            (is_mul(fxu_0_entry[31:0])) ? (((fxu_1_data_0[16] && fxu_1_data_1[16])<<16) |
+                                                           ((fxu_1_data_0[15:0] * fxu_1_data_1[15:0]))) :
+                            (is_div(fxu_0_entry[31:0])) ? (((fxu_1_data_0[16] && fxu_1_data_1[16])<<16) |
+                                                           ((fxu_1_data_0[15:0] / fxu_1_data_1[15:0]))) :
                                                           (fxu_1_data_2);
 
 //Branch Unit
@@ -957,7 +965,7 @@ module main();
 	is_mov = IBq_data[31:28] == 0;
     endfunction
 
-    //Tell in an instruction is mov
+    //Tell in an instruction is add 
     function is_add;
     	input[31:0]IBq_data;
     	is_add = IBq_data[31:28] == 1;
@@ -969,7 +977,19 @@ module main();
         is_sub = IBq_data[31:28] == 7;
     endfunction
 
-    //Tell in an instruction is jmp   
+    //Tell in an instruction is mul 
+    function is_mul;
+        input[31:0]IBq_data;
+        is_mul = IBq_data[31:28] == 9;
+    endfunction
+
+    //Tell in an instruction is sub
+    function is_div;
+        input[31:0]IBq_data;
+        is_div = IBq_data[31:28] == 10;
+    endfunction
+
+//Tell in an instruction is jmp   
     function is_jmp;                  
         input[31:0]IBq_data;          
         is_jmp = IBq_data[31:28] == 2;
@@ -1007,12 +1027,12 @@ module main();
 
     function is_fx;
 	input[31:0]IBq_data;
-	is_fx = (is_add(IBq_data) || is_sub(IBq_data) || is_mov(IBq_data));
+	is_fx = (is_add(IBq_data) || is_sub(IBq_data) || is_mul(IBq_data) || is_div(IBq_data) || is_mov(IBq_data));
     endfunction
 
     function has_two_src;
 	input [31:0]IBq_data;
-	has_two_src = (is_add(IBq_data) || is_sub(IBq_data) || is_ldr(IBq_data) || is_jeq(IBq_data) || is_print(IBq_data));
+	has_two_src = (is_add(IBq_data) || is_sub(IBq_data) || is_mul(IBq_data) || is_div(IBq_data) || is_ldr(IBq_data) || is_jeq(IBq_data) || is_print(IBq_data));
     endfunction
 
     function [3:0]get_dest;
