@@ -1,0 +1,6 @@
+To introduce another instruction:
+add is_XXX function
+update has_two_src
+update dispatch_destination_0 and dispatch_destination_1 (for math, you can simply update is_fx instead since dispatching_destination calls these)
+
+update fxu_0_data and fxu_1_data to account for the new instruction

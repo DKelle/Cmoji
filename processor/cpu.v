@@ -159,7 +159,7 @@ module main();
 		~(ldu_1_next_is_src_0|ldu_1_next_is_src_1)&&!ldu_1_is_loading) ? 2 :
                  is_fx(dispatching_inst_0)&&(~reservation_valid(fx_rs_0)||~(fxu_0_next_is_src_0|fxu_0_next_is_src_1)) ? 3 :                               
                  is_fx(dispatching_inst_0)&&(~reservation_valid(fx_rs_1)||~(fxu_1_next_is_src_0|fxu_1_next_is_src_1)) ? 4 :                               
-                 is_jmp(dispatching_inst_0)||is_jeq(dispatching_inst_0)||is_halt(dispatching_inst_0) ? 5 : 
+                 is_jmp(dispatching_inst_0)||is_jeq(dispatching_inst_0)||is_halt(dispatching_inst_0)||is_jlt(dispatching_inst_0) ? 5 : 
 		 is_print(dispatching_inst_0)&&(~reservation_valid(print_rs)||~(print_next_is_src_0|print_next_is_src_1)) ? 6 : 0) : 0; 
 
 
@@ -462,12 +462,15 @@ module main();
     wire other_rs_empty = ~(reservation_valid(ld_rs_0)||reservation_valid(ld_rs_1)||reservation_valid(fx_rs_0)||reservation_valid(fx_rs_1)); 
     wire branch_is_done = reservation_valid(branch_entry)&&~(branch_next_is_src_0||branch_next_is_src_1)&&other_rs_empty;
     wire data_equal = (branch_next_waiting_on_0 == branch_next_waiting_on_1);
+    wire data_less = (branch_next_waiting_on_0 < branch_next_waiting_on_1);
     wire jeq_ready = ~(branch_next_is_src_0||branch_next_is_src_1)&&reservation_valid(branch_entry);
     wire [16:0]jeq_data = data_equal ? (1<<16|branch_entry[15:0]+get_dest(branch_entry)) : 0;
+    wire [16:0]jlt_data = data_less ? (1<<16|branch_entry[15:0]+get_dest(branch_entry)) : 0;
     wire [15:0]branch_immediate = (branch_entry[27:16]);
     wire [17:0]branch_data = ~other_rs_empty ? 0 :
 			    is_jmp(branch_entry) ? (1<<16|branch_immediate) :
-			    is_jeq(branch_entry) ? (jeq_ready ? (1<<17|jeq_data) : 0) : 0;
+			    is_jeq(branch_entry) ? (jeq_ready ? (1<<17|jeq_data) : 0) : 
+                is_jlt(branch_entry) ? (jeq_ready ? (1<<17|jlt_data) : 0) : 0;
 
     //the 17 bits data wires are 1 valid bit and 16 data bits
 
@@ -1025,6 +1028,11 @@ module main();
 	is_print = IBq_data[31:28] == 8;
     endfunction
 
+    function is_jlt;
+        input[31:0]IBq_data;
+        is_jlt = IBq_data[31:28] == 11;
+    endfunction
+
     function is_fx;
 	input[31:0]IBq_data;
 	is_fx = (is_add(IBq_data) || is_sub(IBq_data) || is_mul(IBq_data) || is_div(IBq_data) || is_mov(IBq_data));
@@ -1032,7 +1040,7 @@ module main();
 
     function has_two_src;
 	input [31:0]IBq_data;
-	has_two_src = (is_add(IBq_data) || is_sub(IBq_data) || is_mul(IBq_data) || is_div(IBq_data) || is_ldr(IBq_data) || is_jeq(IBq_data) || is_print(IBq_data));
+	has_two_src = (is_add(IBq_data) || is_sub(IBq_data) || is_mul(IBq_data) || is_div(IBq_data) || is_ldr(IBq_data) || is_jeq(IBq_data) || is_jlt(IBq_data) || is_print(IBq_data));
     endfunction
 
     function [3:0]get_dest;
