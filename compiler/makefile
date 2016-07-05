@@ -58,7 +58,7 @@ comp1y: y.tab.o lex.yy.o printtoken.o pprint.o symtab.o codgen.o genasm.o
 
 # To compile your file codegen.c --> compiler
 #      using your files lexan.l and parse.y
-compiler: y.tab.o lex.yy.o printtoken.o pprint.o codegen.o genasm.o
+compiler: y.tab.o lex.yy.o printtoken.o pprint.o codegen.o genasm.o 
 	cc -o compiler y.tab.o lex.yy.o printtoken.o pprint.o  \
              codegen.o genasm.o
 
@@ -148,5 +148,3 @@ pars1.tab.c: pars1.y token.h parse.h symtab.h lexan.h
 pars1.tab.o: pars1.tab.c
 	cc -c pars1.tab.c
 
-preprocess:
-	gcc -o test preprocessor.c

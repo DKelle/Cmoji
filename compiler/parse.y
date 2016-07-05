@@ -99,7 +99,7 @@ funcall     : FUNCALL IDENTIFIERTOK
 
 loop        : LOOP expression LPAREN statement_list RPAREN  { $$ = makeloop($1, $2, $3, $4); }
             | LOOP range LPAREN statement_list RPAREN       { $$ = makerangeloop($1, $2, $3, $4); }
-            | LOOP1 LPAREN statement_list RPAREN
+            | LOOP1 LPAREN statement_list RPAREN            { $$ = makeloopone($1, $3); }
             ;
 
 var         : IDENTIFIERTOK { $$ = $1; }
@@ -272,6 +272,19 @@ TOKEN makeelif(TOKEN tok, TOKEN exp, TOKEN thenpart, TOKEN elsepart)
     return tok;
 }
 
+/* makeloopone creates a range loop going from 1 -> 3 (repeates only 2 times) */
+TOKEN makeloopone(TOKEN tok, TOKEN statements)
+{
+    //Create the 1 -> 3 range
+    TOKEN one = makenumbertok(1);
+    TOKEN three = makenumbertok(3);
+    TOKEN range = cons(one,three);
+
+    //create a rangeloop with the new range, and the statements we were passed
+    TOKEN loop = makerangeloop(tok, range, copytok(tok), statements);
+    return loop;
+}
+
 /* makerangeloop makes structures for a while statement using a range.
    tok and tokb are (now) unused tokens that are recycled. */
 TOKEN makerangeloop(TOKEN tok, TOKEN range, TOKEN tokb, TOKEN statement)
@@ -363,6 +376,26 @@ TOKEN cons(TOKEN item, TOKEN list)           /* add item to front of list */
 
 TOKEN binop(TOKEN op, TOKEN lhs, TOKEN rhs)        /* reduce binary operator */
 {
+    //If both LHS and RHS are numbetrtoks, we can reduce immediately
+    if(lhs->tokentype == NUMBERTOK && rhs->tokentype == NUMBERTOK)
+    {
+        int num;
+        switch(op->whichval)
+        {
+            case PLUSOP - OPERATOR_BIAS:
+                return makenumbertok(lhs->whichval + rhs->whichval);
+                break;
+            case MINUSOP - OPERATOR_BIAS:
+                return makenumbertok(lhs->whichval - rhs->whichval);
+                break;
+            case TIMESOP - OPERATOR_BIAS:
+                return makenumbertok(lhs->whichval * rhs->whichval);
+                break;
+            case DIVIDEOP - OPERATOR_BIAS:
+                return makenumbertok(lhs->whichval / rhs->whichval);
+                break;
+        }
+    }
 
     op->operands = lhs;          /* link operands to operator       */
     lhs->link = rhs;             /* link second operand to first    */
@@ -502,12 +535,9 @@ int main()
     int res;
     //initsyms();a
     res = yyparse();
-//    printst();
-    printf("yyparse result = %8d\n", res);
     
-//    if (DEBUG & DB_PARSERES) dbugprinttok(parseresult);
     dbugprinttok(parseresult);
     ppexpr(parseresult);           /* Pretty-print the result tree */
-//    gencode(parseresult, blockoffs[blocknumber], labelnumber);
+    gencode(parseresult);
     return 0;
 }

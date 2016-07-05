@@ -81,6 +81,9 @@ TOKEN makefuncall(TOKEN tok, TOKEN fn, TOKEN args);
 /* Takes in a register number, and creates a var token using that reg */
 TOKEN makevartok(int reg);
 
+/* makeloopone creates a range loop going from 1 -> 3 (repeates only 2 times) */
+TOKEN makeloopone(TOKEN tok, TOKEN statements);
+
 /* makerangeloop makes structures for a while statement that uses arange.
    tok and tokb are (now) unused tokens that are recycled. */
 TOKEN makerangeloop(TOKEN tok, TOKEN range, TOKEN tokb, TOKEN statement);
