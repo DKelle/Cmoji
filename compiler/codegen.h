@@ -16,3 +16,5 @@ int genarith();
 
 /* Make a register available for use again */
 void openreg(int reg);
+
+int getlabel();

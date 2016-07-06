@@ -46,16 +46,21 @@ int stkframesize;   /* total stack frame size */
 int freeregs[16];
 
 /*Entry point for code generator */
-void gencode(TOKEN pcode)
+void gencode(TOKEN pcode, int maxlabel)
 {  
     init();
     TOKEN name, code;
+    nextlabel = maxlabel + 1;
     genc(pcode);
+    //After we have generated all of the code, make sure we also generate a halt
+    genhalt();
 }
 
 void genc(TOKEN pcode)
 {
     TOKEN code = pcode;
+    if(!pcode)
+        return;
     switch(code->tokentype)
     {
         case OPERATOR:
@@ -72,6 +77,7 @@ void genoperator(TOKEN code)
     int reg2;
     TOKEN lhs;
     TOKEN rhs;
+    TOKEN op;
     switch(code->whichval)
     {
         case STATEMENTOP - OPERATOR_BIAS:
@@ -108,6 +114,35 @@ void genoperator(TOKEN code)
             genmov(reg2, reg);
             //reg2 should be opened up for later use. opening reg will do nothing since it is a var
             openreg(reg2);
+            openreg(reg);
+            break;
+        case ELIFOP - OPERATOR_BIAS:
+        case IFOP - OPERATOR_BIAS:
+            op = code->operands;
+            lhs = op->operands;
+            rhs = lhs->link;
+            reg = genarith(lhs);
+            reg2 = genarith(rhs);
+            //This will flip the condition of the if, and generate and jlt instruction
+            int iflabel = getlabel(); 
+            genif(op, reg, reg2, iflabel); //This will say 'if not condition, jump'
+            openreg(reg);
+            openreg(reg2);
+            TOKEN then = op->link;
+            genc(then); //generate the 'then part' of the if
+            int iflabel2 = getlabel();
+            //gen the 'elif' or 'else' if there is one 
+            TOKEN el = then->link;
+            genjump(iflabel2);
+            genlabel(iflabel);
+            if(el)
+                genc(el);
+            genlabel(iflabel2);
+            break;
+        case PRINTOP - OPERATOR_BIAS:
+            op = code->operands;
+            reg = genarith(op);
+            genprint(reg);
             openreg(reg);
             break;
     }
@@ -190,4 +225,11 @@ void openreg(int reg)
         if(DEBUGGEN & DB_OPEN) 
             printf("freeing reg %d\n",reg);
     }
+}
+
+int getlabel()
+{
+    int ret = nextlabel;
+    nextlabel = nextlabel + 1;
+    return ret;
 }

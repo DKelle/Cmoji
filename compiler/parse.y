@@ -538,6 +538,6 @@ int main()
     
     dbugprinttok(parseresult);
     ppexpr(parseresult);           /* Pretty-print the result tree */
-    gencode(parseresult);
+    gencode(parseresult, labelnumber);
     return 0;
 }
