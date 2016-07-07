@@ -87,8 +87,8 @@ statement_list  : statement statement_list  { $$ = makestatements($1, $2);}
                 | statement                 { $$ = makestatements($1, NULL);  }
                 ;
 
-if          : IF expression LPAREN statement_list RPAREN        { $$ = makeif($1, $2, $4, NULL); }
-            | IF expression LPAREN statement_list RPAREN elif   { $$ = makeif($1, $2, $4, $6); }
+if          : IF comparator LPAREN statement_list RPAREN        { $$ = makeif($1, $2, $4, NULL); }
+            | IF comparator LPAREN statement_list RPAREN elif   { $$ = makeif($1, $2, $4, $6); }
             ;
 
 assignment  : var EQOP expression { $$ = binop($2, $1, $3); }
@@ -106,7 +106,10 @@ var         : IDENTIFIERTOK { $$ = $1; }
             ;
 
 expression  : expression compare_op simple_expression       { $$ = binop($2,$1,$3);}
-            | simple_expression                         { $$ = $1; }
+            | simple_expression                             { $$ = $1; }
+            ;
+
+comparator  : expression compare_op simple_expression   { $$ = binop($2,$1,$3); }
             ;
 
 elif        : ELIF expression LPAREN statement_list RPAREN      { $$ = makeelif($1, $2, $4, NULL); }

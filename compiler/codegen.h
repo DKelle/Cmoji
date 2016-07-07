@@ -1,5 +1,5 @@
 /* Generate arithmetic expression, return a register number */
-int genarith(TOKEN code);
+int genarith(TOKEN code, int dest);
 
 /* Generate code for a statement */
 void genc(TOKEN code);

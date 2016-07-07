@@ -54,6 +54,16 @@ void gencode(TOKEN pcode, int maxlabel)
     genc(pcode);
     //After we have generated all of the code, make sure we also generate a halt
     genhalt();
+
+    //Test to make sure that we have freed all of registers
+    int i = 11;
+    for(i = 11; i < 16; i ++)
+    {
+        if(!freeregs[i])
+        {
+            printf("WARNING: there are unfreed registers\n");
+        }
+    }
 }
 
 void genc(TOKEN pcode)
@@ -75,6 +85,7 @@ void genoperator(TOKEN code)
 {
     int reg;
     int reg2;
+    int lhsreg;
     TOKEN lhs;
     TOKEN rhs;
     TOKEN op;
@@ -95,7 +106,6 @@ void genoperator(TOKEN code)
             //generate the RHS, and put it into LHS.
             //gen lhs even though it is just a var. This will tell us which register to mov into
             lhs = code->operands;
-            reg = genarith(lhs);
             //RHS may be some arithmetic expression, so generate code for it
             rhs = lhs->link;
             switch(rhs->tokentype)
@@ -107,22 +117,23 @@ void genoperator(TOKEN code)
                         printf("generating immediate %d early\n", rhs->whichval);
                     return;
                 default:
-                    reg2 = genarith(rhs);
+                    //if RHS is an operator, (var = 1+2) we have to gen the arithmatic (1+2)
+                    //We want to gen directly into LHS, so get the reg number
+                    lhsreg = atoi(lhs->stringval+3);
+                    reg2 = genarith(rhs, lhsreg);
                     break;
             }
-            //The value of RHS is in reg2. Move reg2 to reg
-            genmov(reg2, reg);
-            //reg2 should be opened up for later use. opening reg will do nothing since it is a var
-            openreg(reg2);
+            //reg2 should be opened up forV later use. opening reg will do nothing since it is a var
             openreg(reg);
+            openreg(reg2);
             break;
         case ELIFOP - OPERATOR_BIAS:
         case IFOP - OPERATOR_BIAS:
             op = code->operands;
             lhs = op->operands;
             rhs = lhs->link;
-            reg = genarith(lhs);
-            reg2 = genarith(rhs);
+            reg = genarith(lhs, -1);
+            reg2 = genarith(rhs, -1);
             //This will flip the condition of the if, and generate and jlt instruction
             int iflabel = getlabel(); 
             genif(op, reg, reg2, iflabel); //This will say 'if not condition, jump'
@@ -141,16 +152,25 @@ void genoperator(TOKEN code)
             break;
         case PRINTOP - OPERATOR_BIAS:
             op = code->operands;
-            reg = genarith(op);
+            reg = genarith(op, -1);
             genprint(reg);
             openreg(reg);
             break;
+        case LABELOP - OPERATOR_BIAS:
+            op = code->operands;
+            int label = op->whichval;
+            genlabel(label);
+            break;
+        case GOTOOP - OPERATOR_BIAS:
+            op = code->operands;
+            int jmp = op->whichval;
+            genjump(jmp);
     }
 }
 
 /*Generate some arithmetic expression into a register, and return the regitser */
 
-int genarith(TOKEN code)
+int genarith(TOKEN code, int dest)
 {
     TOKEN lhs;
     TOKEN rhs;
@@ -179,15 +199,28 @@ int genarith(TOKEN code)
             if(DEBUGGEN & DB_ARITH)
                 printf("genarith found an operator\n");
             //This is either a +, -, *, or /. Generate both LHS and RHS
-            //then do the operation into reg1
+            //then do the operation into dest 
             lhs = code->operands;
             rhs = lhs->link;
-            reg = genarith(lhs);
-            reg2 = genarith(rhs);
+            reg = genarith(lhs, -1);
+            reg2 = genarith(rhs, -1);
             //Generate this inst into reg. reg2 should now be open for later use
-            genmath(code->whichval, reg, reg2, reg);
-            openreg(reg2);
-            return reg;
+            //If we have been given a destination to use, use it
+            //otherwise, gen into reg
+            if(dest > 0)
+            {
+                genmath(code->whichval, reg, reg2, dest);
+                openreg(reg);
+                openreg(reg2);
+                return dest;
+            }
+            else
+            {
+                genmath(code->whichval, reg, reg2, reg);
+                openreg(reg);
+                openreg(reg2);
+                return reg;
+            }
     }
     return 0; 
 }

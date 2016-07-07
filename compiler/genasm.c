@@ -48,7 +48,6 @@ void genif(TOKEN operator, int lhs, int rhs, int label)
     switch(operator->whichval)
     {
         case LEOP - OPERATOR_BIAS:
-            //rhs < lhs
             printf("\tjlt\treg%d\treg%d\tLABEL%d\t//if reg%d < reg%d jmp LABEL%d\n",rhs,lhs,label,rhs,lhs,label);
             break;
         case GEOP - OPERATOR_BIAS:
@@ -56,14 +55,15 @@ void genif(TOKEN operator, int lhs, int rhs, int label)
             break;
         case LTOP - OPERATOR_BIAS:
             printf("\tjlt\treg%d\treg%d\tLABEL%d\t//if reg%d <= reg%d jmp LABEL%d\n",rhs,lhs,label,rhs,lhs,label);
-            printf("\tjeq\treg%d\treg%d\tLABEL%d\t//\"\t\t\t\"\n",rhs,lhs,label);
+            printf("\tjeq\treg%d\treg%d\tLABEL%d\t//\"\t\t\t\t\"\n",rhs,lhs,label);
             break;
         case GTOP - OPERATOR_BIAS:
             printf("\tjlt\treg%d\treg%d\tLABEL%d\t//if reg%d <= reg%d jmp LABEL%d\n",lhs,rhs,label,lhs,rhs,label);
-            printf("\tjeq\treg%d\treg%d\tLABEL%d\t//\"\t\t\t\"\n",lhs,rhs,label);
+            printf("\tjeq\treg%d\treg%d\tLABEL%d\t//\"\t\t\t\t\"\n",lhs,rhs,label);
             break;
         case EQOP - OPERATOR_BIAS:
-            printf("\tjeq\treg%d\treg%d\t\tLABEL%d\t",lhs,rhs,label);
+            printf("\tjle\treg%d\treg%d\tLABEL%d\t//if reg%d != reg%d jmp LABEL%d\n",lhs,rhs,label,lhs,rhs,label);
+            printf("\tjle\treg%d\treg%d\tLABEL%d\t//\"\t\t\t\t\"\n",rhs,lhs,label);
             break;
     }
 }
@@ -73,6 +73,7 @@ void genjump(int label)
     printf("\tjmp\tLABEL%d\t\t\t//Jump to LABEL %d\n", label, label);
 }
 
+/* gen a label based off a given label number */
 void genlabel(int label)
 {
     printf(".LABEL%d\n", label);
