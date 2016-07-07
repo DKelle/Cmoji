@@ -29,7 +29,7 @@
 #include "codegen.h"
 
 /* Set DEBUGGEN to 1 for debug printouts of code generation */
-#define DEBUGGEN 0
+#define DEBUGGEN 0 
 
 #define DB		        0		
 #define DB_OPERATOR 	1 
@@ -112,6 +112,11 @@ void genoperator(TOKEN code)
             {
                 //if RHS is just a number, we can just gen code for the mov now
                 case NUMBERTOK:
+                    //We we are moving into a var, supply that register number to movi
+                    if(lhs->tokentype == IDENTIFIERTOK)
+                    {
+                       reg = atoi(lhs->stringval+3);
+                    }
                     genimmediate(rhs->whichval, reg);
                     if(DEBUGGEN & DB_OPERATOR)
                         printf("generating immediate %d early\n", rhs->whichval);

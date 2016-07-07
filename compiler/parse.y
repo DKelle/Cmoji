@@ -97,7 +97,7 @@ assignment  : var EQOP expression { $$ = binop($2, $1, $3); }
 funcall     : FUNCALL IDENTIFIERTOK 
             ;
 
-loop        : LOOP expression LPAREN statement_list RPAREN  { $$ = makeloop($1, $2, $3, $4); }
+loop        : LOOP comparator LPAREN statement_list RPAREN  { $$ = makeloop($1, $2, $3, $4); }
             | LOOP range LPAREN statement_list RPAREN       { $$ = makerangeloop($1, $2, $3, $4); }
             | LOOP1 LPAREN statement_list RPAREN            { $$ = makeloopone($1, $3); }
             ;
