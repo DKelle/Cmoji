@@ -184,11 +184,8 @@ int labels[10000]; //use this so we can mape user defined label number -> intern
    /*  Note: you should add to the above values and insert debugging
        printouts in your routines similar to those that are shown here.     */
 
-
-/* define the reserved registers */
+//TODO find a better way to get an open reg for the counter
 #define COUNTERREG 10
-#define PRINTREG 11
-
 
 /* takes in a statement and a statment list, and links them together */
 TOKEN makestatements(TOKEN stmnt1, TOKEN stmnt2)

@@ -8,6 +8,7 @@ FILE *fout;
 
 void openfile()
 {
+    printf("about to open file\n");
     fout = fopen("a.cms", "w");
 }
 
@@ -18,7 +19,7 @@ void closefile()
 
 void genimmediate(int imed, int reg)
 {
-    char *asmout;
+    char asmout[100];
     sprintf(asmout,"\tmovi\t%d\treg%d\t\t//move %d -> reg%d\n", imed, reg, imed, reg);
     if(DEBUG)
         printf("%s",asmout);
@@ -27,7 +28,7 @@ void genimmediate(int imed, int reg)
 
 void genmov(int source, int dest)
 {
-    char *asmout;
+    char asmout[100];
     sprintf(asmout, "\tmov\treg%d\treg%d\t\t//move reg%d -> reg%d\n", source, dest, source, dest);
     if(DEBUG)
         printf("%s", asmout);
@@ -38,7 +39,7 @@ void genmath(int operator, int lhs, int rhs, int dest)
 {
     char symbol;
     char* inst;
-    char *asmout;
+    char asmout[100];
     switch(operator)
     {
         case PLUSOP - OPERATOR_BIAS:
@@ -67,8 +68,8 @@ void genmath(int operator, int lhs, int rhs, int dest)
 
 void genif(TOKEN operator, int lhs, int rhs, int label)
 {
-    char *asmout;
-    char *asmout2;
+    char asmout[100];
+    char asmout2[100];
     //we want to take the jump if the condition is false
     //Our only comparison instruction is jlt
     switch(operator->whichval)
@@ -96,17 +97,21 @@ void genif(TOKEN operator, int lhs, int rhs, int label)
     if(DEBUG)
     {
         printf("%s", asmout);
-        if(asmout2)
+        if(operator->whichval == LTOP - OPERATOR_BIAS ||
+           operator->whichval == GTOP - OPERATOR_BIAS ||
+           operator->whichval == EQOP - OPERATOR_BIAS)
             printf("%s", asmout2);
     }
     fputs(asmout, fout);
-    if(asmout2)
+    if(operator->whichval == LTOP - OPERATOR_BIAS ||
+       operator->whichval == GTOP - OPERATOR_BIAS ||
+       operator->whichval == EQOP - OPERATOR_BIAS)
         fputs(asmout2, fout);
 }
 
 void genjump(int label)
 {
-    char *asmout;
+    char asmout[100];
     sprintf(asmout, "\tjmp\tLABEL%d\t\t\t//Jump to LABEL %d\n", label, label);
     if(DEBUG)
         printf("%s", asmout);
@@ -116,7 +121,7 @@ void genjump(int label)
 /* gen a label based off a given label number */
 void genlabel(int label)
 {
-    char *asmout;
+    char asmout[100];
     sprintf(asmout, ".LABEL%d\n", label);
     if(DEBUG)
         printf("%s", asmout);
@@ -125,7 +130,7 @@ void genlabel(int label)
 
 void genprint(int reg)
 {
-    char *asmout;
+    char asmout[100];
     sprintf(asmout, "\tprint \treg%d\t\t\t//print reg%d\n", reg, reg);
     if(DEBUG)
         printf("%s", asmout);
@@ -135,7 +140,7 @@ void genprint(int reg)
 /* gena a halt */
 void genhalt()
 {
-    char *asmout;
+    char asmout[100];
     sprintf(asmout, "\thalt\t\t\t\t//halt\n");
     if(DEBUG)
         printf("%s", asmout);
