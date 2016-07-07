@@ -21,3 +21,9 @@ void genprint(int reg);
 
 /* gen a halt */
 void genhalt();
+
+/*open the .cms file for the asm */
+void openfile();
+
+/* close the .cms file */
+void closefile();

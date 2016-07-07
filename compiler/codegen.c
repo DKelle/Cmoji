@@ -44,6 +44,7 @@ int stkframesize;   /* total stack frame size */
    pcode    = pointer to code:  (program foo (output) (progn ...))
          */
 int freeregs[16];
+FILE *fout;
 
 /*Entry point for code generator */
 void gencode(TOKEN pcode, int maxlabel)
@@ -64,6 +65,10 @@ void gencode(TOKEN pcode, int maxlabel)
             printf("WARNING: there are unfreed registers\n");
         }
     }
+
+    //make sure to close a.cms
+    closefile();
+
 }
 
 void genc(TOKEN pcode)
@@ -237,6 +242,9 @@ void init()
     {
         freeregs[i] = (i > 10);
     }
+    
+    //Open the a.cms file for genasm to write to
+    openfile();
 }
 
 /*Used to get an open register to generate code into */
