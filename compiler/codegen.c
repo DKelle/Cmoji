@@ -129,7 +129,6 @@ void genoperator(TOKEN code)
                     break;
             }
             //reg2 should be opened up forV later use. opening reg will do nothing since it is a var
-            openreg(reg);
             openreg(reg2);
             break;
         case ELIFOP - OPERATOR_BIAS:
@@ -155,6 +154,13 @@ void genoperator(TOKEN code)
                 genc(el);
             genlabel(iflabel2);
             break;
+        case ELSEOP - OPERATOR_BIAS:
+            //If we are genearting an else, then we have already gen'd an if
+            //the if that was already gen'd will jump to here if the condition is false
+            //so we only need to gen the statement list right here
+            lhs = code->operands;
+            genc(lhs);
+            break;
         case PRINTOP - OPERATOR_BIAS:
             op = code->operands;
             reg = genarith(op, -1);
@@ -170,6 +176,10 @@ void genoperator(TOKEN code)
             op = code->operands;
             int jmp = op->whichval;
             genjump(jmp);
+            break;
+        case HALTOP - OPERATOR_BIAS:
+            genhalt();
+            break;
     }
 }
 
@@ -209,23 +219,13 @@ int genarith(TOKEN code, int dest)
             rhs = lhs->link;
             reg = genarith(lhs, -1);
             reg2 = genarith(rhs, -1);
-            //Generate this inst into reg. reg2 should now be open for later use
-            //If we have been given a destination to use, use it
-            //otherwise, gen into reg
-            if(dest > 0)
-            {
-                genmath(code->whichval, reg, reg2, dest);
-                openreg(reg);
-                openreg(reg2);
-                return dest;
-            }
-            else
-            {
-                genmath(code->whichval, reg, reg2, reg);
-                openreg(reg);
-                openreg(reg2);
-                return reg;
-            }
+
+            //If we haven't already been given a destination to gen into, then we must grab one
+            dest =  (dest >= 0) ? dest : getreg();
+            genmath(code->whichval, reg, reg2, dest);
+            openreg(reg);
+            openreg(reg2);
+            return dest;
     }
     return 0; 
 }

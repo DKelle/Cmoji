@@ -118,3 +118,6 @@ TOKEN makeconst(TOKEN sign, TOKEN tok);
 TOKEN talloc();
 
 TOKEN makestatement(TOKEN tkn, TOKEN prog);
+
+/* Create a HALTOP token from a HALT token */
+TOKEN makehalt(TOKEN tok);

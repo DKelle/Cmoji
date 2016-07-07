@@ -49,6 +49,8 @@ typedef struct tokn {
 #define IDENTIFIERTOK   261
 #define NUMBERTOK       262
 
+/* Tokens.  */
+
 #define PLUSOP 263
 #define MINUSOP 264
 #define TIMESOP 265
@@ -70,26 +72,27 @@ typedef struct tokn {
 #define STATEMENTOP 281
 #define SLEEPOP 282
 #define PRINTOP 283
+#define HALTOP 284
 #define OPERATOR_BIAS   (PLUSOP - 1)
 
-#define LPAREN 284
-#define RPAREN 285
+#define LPAREN 285
+#define RPAREN 286
 #define DELIMITER_BIAS (LPAREN - 1)
 
-#define LOOP 286
-#define LOOP1 287
-#define TO 288
-#define PRINT 289
-#define SILENCE 290
-#define FUNCALL 291
-#define DEF 292
-#define IF 293
-#define ELIF 294
-#define ELSE 295
-#define RET 296
-#define SLEEP 297
-#define FUNCTION 298
-#define HALT 299
+#define LOOP 287
+#define LOOP1 288
+#define TO 289
+#define PRINT 290
+#define SILENCE 291
+#define FUNCALL 292
+#define DEF 293
+#define IF 294
+#define ELIF 295
+#define ELSE 296
+#define RET 297
+#define SLEEP 298
+#define FUNCTION 299
+#define HALT 300
 #define RESERVED_BIAS   (LOOP - 1)
 
 #define INTEGER     0   /* datatype numbers */

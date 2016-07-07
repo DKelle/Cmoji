@@ -65,7 +65,7 @@ TOKEN parseresult;
 
 %token PLUSOP MINUSOP TIMESOP DIVIDEOP                      /* operators */
 %token EQOP LTOP LEOP GEOP GTOP IFOP ELIFOP ELSEOP NEOP ANDOP OROP NOTOP
-%token GOTOOP LABELOP STATEMENTOP SLEEPOP PRINTOP
+%token GOTOOP LABELOP STATEMENTOP SLEEPOP PRINTOP HALTOP
 
 %token LPAREN RPAREN                                        /* Delimiters */
 
@@ -81,6 +81,7 @@ statement   : if            { $$ = $1; }
             | funcall       { $$ = $1; }
             | loop          { $$ = $1; }
             | print         { $$ = $1; }
+            | halt          { $$ = $1; }
             ;
 
 statement_list  : statement statement_list  { $$ = makestatements($1, $2);}
@@ -150,6 +151,8 @@ factor  : NUMBERTOK                 { $$ = $1; }
 
 print   : PRINT expression  {$$ = makeprint($1, $2); }
         ;
+
+halt    : HALT              { $$ = makehalt($1); }
 
 %%
 
@@ -351,6 +354,16 @@ TOKEN makeloop(TOKEN tok, TOKEN expr, TOKEN tokb, TOKEN statement)
     TOKEN prog = makestatement(temp, label);
 
     return prog;
+}
+
+/* Takes in a halt token, and produced a HALTOP */
+TOKEN makehalt(TOKEN tok)
+{
+    printf("starting to make halt\n");
+    tok->tokentype = OPERATOR;
+    tok->whichval = HALTOP - OPERATOR_BIAS;
+    printf("dont making halt\n");
+    return tok;
 }
 
 /* Takes in a register number, and creates a var token using that reg */
