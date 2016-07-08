@@ -2,13 +2,13 @@
 #include "token.h"
 #include "genasm.h"
 
-#define DEBUG 1
-
+int DEBUG;
 FILE *fout;
 
-void openfile()
+void openfile(int debug)
 {
-    printf("about to open file\n");
+
+    DEBUG = debug;
     fout = fopen("a.cms", "w");
 }
 
@@ -112,7 +112,7 @@ void genif(TOKEN operator, int lhs, int rhs, int label)
 void genjump(int label)
 {
     char asmout[100];
-    sprintf(asmout, "\tjmp\tLABEL%d\t\t\t//Jump to LABEL %d\n", label, label);
+    sprintf(asmout, "\tjmp\tLABEL%d\t\t\t//jump to LABEL%d\n", label, label);
     if(DEBUG)
         printf("%s", asmout);
     fputs(asmout, fout);

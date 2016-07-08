@@ -7,22 +7,22 @@ module main();
         $dumpvars(1,main);
         $dumpvars(1,i0);
 
-	reg_file[0][19:16] = 0;
-	reg_file[1][19:16] = 0;
-	reg_file[2][19:16] = 0;
-	reg_file[3][19:16] = 0;
-	reg_file[4][19:16] = 0;
-	reg_file[5][19:16] = 0;
-	reg_file[6][19:16] = 0;
-	reg_file[7][19:16] = 0;
-	reg_file[8][19:16] = 0;
-	reg_file[9][19:16] = 0;
-	reg_file[10][19:16] = 0;
-	reg_file[11][19:16] = 0;
-	reg_file[12][19:16] = 0;
-	reg_file[13][19:16] = 0;
-	reg_file[14][19:16] = 0;
-	reg_file[15][19:16] = 0;
+	reg_file[0] = 0;
+	reg_file[1] = 0;
+	reg_file[2] = 0;
+	reg_file[3] = 0;
+	reg_file[4] = 0;
+	reg_file[5] = 0;
+	reg_file[6] = 0;
+	reg_file[7] = 0;
+	reg_file[8] = 0;
+	reg_file[9] = 0;
+	reg_file[10] = 0;
+	reg_file[11] = 0;
+	reg_file[12] = 0;
+	reg_file[13] = 0;
+	reg_file[14] = 0;
+	reg_file[15] = 0;
 
     end
 
@@ -893,7 +893,7 @@ module main();
 	~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 	if(cdb_6[16]) begin
-               $display("#%x",cdb_6[15:0]);
+               $display("%d",cdb_6[15:0]);
 	end
 
 	/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -922,6 +922,7 @@ module main();
     	reg_file[15] <= reg_15_next_who<<16|reg_15_next_data;
 
 ///* This will print out the values of every register at the end of the program 
+/*
 	if(halt) begin
                $display("#0:%x",reg_file[0][15:0]);
                $display("#1:%x",reg_file[1][15:0]);
@@ -940,7 +941,7 @@ module main();
                $display("#14:%x",reg_file[14][15:0]);
                $display("#15:%x",reg_file[15][15:0]);
 	end
- 	
+ */	
 	/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	|	     Done updating registers		|
 	~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
