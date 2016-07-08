@@ -549,8 +549,11 @@ int main()
     //initsyms();a
     res = yyparse();
     
-    dbugprinttok(parseresult);
-    ppexpr(parseresult);           /* Pretty-print the result tree */
-    gencode(parseresult, labelnumber);
+    if(DEBUG > 0)
+    {
+        dbugprinttok(parseresult);
+        ppexpr(parseresult);           /* Pretty-print the result tree */
+    }   
+    gencode(parseresult, labelnumber, (DEBUG > 0));
     return 0;
 }

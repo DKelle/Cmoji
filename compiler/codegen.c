@@ -35,7 +35,6 @@
 #define DB_OPERATOR 	1 
 #define DB_ARITH		2
 #define DB_OPEN     	4
-#define DB_FUNCALL	8
 #define DB_GOTO		16
 
 int nextlabel;    /* Next available label number */
@@ -45,10 +44,12 @@ int stkframesize;   /* total stack frame size */
          */
 int freeregs[16];
 FILE *fout;
+int DEBUGASM;
 
 /*Entry point for code generator */
-void gencode(TOKEN pcode, int maxlabel)
-{  
+void gencode(TOKEN pcode, int maxlabel, int debug)
+{ 
+    DEBUGASM = debug;
     init();
     TOKEN name, code;
     nextlabel = maxlabel + 1;
@@ -244,7 +245,7 @@ void init()
     }
     
     //Open the a.cms file for genasm to write to
-    openfile();
+    openfile(DEBUGASM);
 }
 
 /*Used to get an open register to generate code into */
