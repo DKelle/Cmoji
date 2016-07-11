@@ -17,4 +17,6 @@ int genarith();
 /* Make a register available for use again */
 void openreg(int reg);
 
+void genmove(int src, int dest);
+
 int getlabel();

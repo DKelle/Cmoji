@@ -99,7 +99,7 @@ module main();
     //
     //Not sure about this
     //
-    wire [3:0]cdb_6_dest = 0;
+    wire [3:0]cdb_6_dest = get_dest(print_entry);
     wire [15:0]cdb_1_pc = ldu_0_entry[15:0];
     wire [15:0]cdb_2_pc = ldu_1_entry[15:0];
     wire [15:0]cdb_3_pc = fxu_0_entry[15:0];

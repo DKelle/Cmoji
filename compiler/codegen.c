@@ -131,7 +131,8 @@ void genoperator(TOKEN code)
                     //if RHS is an operator, (var = 1+2) we have to gen the arithmatic (1+2)
                     //We want to gen directly into LHS, so get the reg number
                     lhsreg = atoi(lhs->stringval+3);
-                    reg2 = genarith(rhs, lhsreg);
+                    reg2 = genarith(rhs, -1);
+                    genmove(reg2,lhsreg);
                     break;
             }
             //reg2 should be opened up forV later use. opening reg will do nothing since it is a var
@@ -279,4 +280,12 @@ int getlabel()
     int ret = nextlabel;
     nextlabel = nextlabel + 1;
     return ret;
+}
+
+void genmove(int src, int dest)
+{
+    int reg = getreg();
+    genimmediate(0, reg);
+    genmath(PLUSOP - OPERATOR_BIAS, src, reg, dest);
+    openreg(reg);
 }
