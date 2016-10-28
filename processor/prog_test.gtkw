@@ -1,0 +1,38 @@
+[*]
+[*] GTKWave Analyzer v3.3.58 (w)1999-2014 BSI
+[*] Fri Oct 28 22:56:09 2016
+[*]
+[dumpfile] "/v/filer4b/v38q001/dkelle/Documents/Cmoji/processor/cpu.vcd"
+[dumpfile_mtime] "Fri Oct 28 22:47:26 2016"
+[dumpfile_size] 22042
+[savefile] "/v/filer4b/v38q001/dkelle/Documents/Cmoji/processor/prog_test.gtkw"
+[timestart] 0
+[size] 1855 1176
+[pos] -1 -1
+*-9.000000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] main.
+[sst_width] 214
+[signals_width] 174
+[sst_expanded] 1
+[sst_vpaned_height] 352
+@28
+main.i0.clk
+@200
+-
+@22
+main.cdb_1[16:0]
+main.cdb_2[16:0]
+main.cdb_3[16:0]
+main.cdb_4[16:0]
+main.cdb_5[17:0]
+main.cdb_6[16:0]
+@200
+-
+@23
+main.fxu_0_data_0[16:0]
+@22
+main.fxu_0_data_1[16:0]
+main.fxu_0_data_2[16:0]
+main.fxu_0_data[16:0]
+[pattern_trace] 1
+[pattern_trace] 0
