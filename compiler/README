@@ -1,0 +1,16 @@
+To run a cmj program through the comiler:
+
+Put the cmj code into a file.
+    > java preprocessor < file.cmj
+    > ./compiler < preprocessed.txt
+this will run the compiler and codegenerator, placing a.cms into this directory
+    > python assembler.py 
+this will create the machine code, and put it into ../processor/a.hex
+
+To run the processor
+    > cd ../processor
+    > ./cpu
+
+
+Alternatively, run
+    > ./compile.sh
