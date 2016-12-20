@@ -162,6 +162,7 @@ module main();
                  is_jmp(dispatching_inst_0)||is_jeq(dispatching_inst_0)||is_halt(dispatching_inst_0)||is_jlt(dispatching_inst_0) ? 5 : 
 		 is_print(dispatching_inst_0)&&(~reservation_valid(print_rs)||~(print_next_is_src_0|print_next_is_src_1)) ? 6 : 0) : 0; 
 
+     wire is_print_wire = is_print(dispatching_inst_0);
 
 
     //Decide which instructions we should be dispatching
@@ -172,7 +173,7 @@ module main();
 
 
     //After we have found the correct instruction, decide where it needs to be dispatched 
-    wire [2:0]dispatch_destination_1 = (branch_rs_open) ?                                                                                   
+    wire [2:0]dispatch_destination_1 = (branch_rs_open || print_rs_open) ?                                                                                   
            ((is_ld(dispatching_inst_1)||is_ldr(dispatching_inst_1))&&~(dispatch_destination_0==1)
    	   &&(~reservation_valid(ld_rs_0)||~(ldu_0_next_is_src_0|ldu_0_next_is_src_1)&&~ldu_0_is_loading) ? 1 :  
            (is_ld(dispatching_inst_1)||is_ldr(dispatching_inst_1))&&~(dispatch_destination_0==2)
@@ -423,13 +424,14 @@ module main();
     //Use this data wire if we are a mov
     wire [16:0]fxu_1_data_2 = fxu_1_entry[67] ? (1<<16) | get_immediate(fxu_1_entry) : 0;
     //decide what our final data looks like
+    wire is_mult = is_mul(fxu_0_entry[31:0]);
     wire [16:0]fxu_1_data = (is_add(fxu_1_entry[31:0])) ? (((fxu_1_data_0[16] && fxu_1_data_1[16])<<16) |
                                                            ((fxu_1_data_0[15:0] + fxu_1_data_1[15:0]))) :
                             (is_sub(fxu_1_entry[31:0])) ? (((fxu_1_data_0[16] && fxu_1_data_1[16])<<16) |
                                                            ((fxu_1_data_0[15:0] - fxu_1_data_1[15:0]))) :
-                            (is_mul(fxu_0_entry[31:0])) ? (((fxu_1_data_0[16] && fxu_1_data_1[16])<<16) |
+                            (is_mul(fxu_1_entry[31:0])) ? (((fxu_1_data_0[16] && fxu_1_data_1[16])<<16) |
                                                            ((fxu_1_data_0[15:0] * fxu_1_data_1[15:0]))) :
-                            (is_div(fxu_0_entry[31:0])) ? (((fxu_1_data_0[16] && fxu_1_data_1[16])<<16) |
+                            (is_div(fxu_1_entry[31:0])) ? (((fxu_1_data_0[16] && fxu_1_data_1[16])<<16) |
                                                            ((fxu_1_data_0[15:0] / fxu_1_data_1[15:0]))) :
                                                           (fxu_1_data_2);
 

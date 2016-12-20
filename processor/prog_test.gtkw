@@ -1,18 +1,18 @@
 [*]
-[*] GTKWave Analyzer v3.3.58 (w)1999-2014 BSI
-[*] Fri Oct 28 22:56:09 2016
+[*] GTKWave Analyzer v3.3.73 (w)1999-2016 BSI
+[*] Tue Dec 20 07:33:07 2016
 [*]
-[dumpfile] "/v/filer4b/v38q001/dkelle/Documents/Cmoji/processor/cpu.vcd"
-[dumpfile_mtime] "Fri Oct 28 22:47:26 2016"
-[dumpfile_size] 22042
-[savefile] "/v/filer4b/v38q001/dkelle/Documents/Cmoji/processor/prog_test.gtkw"
-[timestart] 0
-[size] 1855 1176
+[dumpfile] "/Users/dkelle/Documents/CS/Cmoji/processor/cpu.vcd"
+[dumpfile_mtime] "Sun Dec 18 23:33:23 2016"
+[dumpfile_size] 22089
+[savefile] "/Users/dkelle/Documents/CS/Cmoji/processor/prog_test.gtkw"
+[timestart] 739
+[size] 1680 1001
 [pos] -1 -1
-*-9.000000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+*-9.000000 2019 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [treeopen] main.
 [sst_width] 214
-[signals_width] 174
+[signals_width] 262
 [sst_expanded] 1
 [sst_vpaned_height] 352
 @28
@@ -28,11 +28,22 @@ main.cdb_5[17:0]
 main.cdb_6[16:0]
 @200
 -
-@23
-main.fxu_0_data_0[16:0]
 @22
+main.fxu_0_data_0[16:0]
 main.fxu_0_data_1[16:0]
 main.fxu_0_data_2[16:0]
 main.fxu_0_data[16:0]
+@200
+-
+@24
+main.dispatch_destination_0[2:0]
+main.dispatch_destination_1[2:0]
+@22
+main.dispatching_inst_0[31:0]
+main.dispatching_inst_1[31:0]
+@200
+-
+@29
+main.is_mult
 [pattern_trace] 1
 [pattern_trace] 0
