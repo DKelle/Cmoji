@@ -280,8 +280,8 @@ TOKEN makeloopone(TOKEN tok, TOKEN statements)
 {
     //Create the 1 -> 3 range
     TOKEN one = makenumbertok(1);
-    TOKEN three = makenumbertok(3);
-    TOKEN range = cons(one,three);
+    TOKEN two = makenumbertok(2);
+    TOKEN range = cons(one,two);
 
     //create a rangeloop with the new range, and the statements we were passed
     TOKEN loop = makerangeloop(tok, range, copytok(tok), statements);
@@ -554,6 +554,7 @@ int main()
         dbugprinttok(parseresult);
         ppexpr(parseresult);           /* Pretty-print the result tree */
     }   
+//    ppexpr(parseresult);           /* Pretty-print the result tree */
     gencode(parseresult, labelnumber, (DEBUG > 0));
     return 0;
 }
