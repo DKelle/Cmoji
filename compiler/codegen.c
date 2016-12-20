@@ -27,7 +27,8 @@
 #include "token.h"
 #include "genasm.h"
 #include "codegen.h"
-
+#include "lexan.h"
+#include "parse.h"
 /* Set DEBUGGEN to 1 for debug printouts of code generation */
 #define DEBUGGEN 0 
 
@@ -108,7 +109,7 @@ void genoperator(TOKEN code)
             }
             break;
         case EQOP - OPERATOR_BIAS:
-            if(DEBUGGEN & DB_OPERATOR)printf("found eq\n");
+            if(DEBUGGEN & DB_OPERATOR)printf("found eq - %s\n", lhs->stringval);
             //generate the RHS, and put it into LHS.
             //gen lhs even though it is just a var. This will tell us which register to mov into
             lhs = code->operands;
@@ -116,6 +117,7 @@ void genoperator(TOKEN code)
             rhs = lhs->link;
             switch(rhs->tokentype)
             {
+                printf("inside rhs\n");
                 //if RHS is just a number, we can just gen code for the mov now
                 case NUMBERTOK:
                     //We we are moving into a var, supply that register number to movi
@@ -131,8 +133,7 @@ void genoperator(TOKEN code)
                     //if RHS is an operator, (var = 1+2) we have to gen the arithmatic (1+2)
                     //We want to gen directly into LHS, so get the reg number
                     lhsreg = atoi(lhs->stringval+3);
-                    reg2 = genarith(rhs, -1);
-                    genmove(reg2,lhsreg);
+                    reg2 = genarith(rhs, lhsreg);
                     break;
             }
             //reg2 should be opened up forV later use. opening reg will do nothing since it is a var
@@ -222,6 +223,7 @@ int genarith(TOKEN code, int dest)
                 printf("genarith found an operator\n");
             //This is either a +, -, *, or /. Generate both LHS and RHS
             //then do the operation into dest 
+            
             lhs = code->operands;
             rhs = lhs->link;
             reg = genarith(lhs, -1);
