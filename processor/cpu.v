@@ -163,6 +163,7 @@ module main();
 		 is_print(dispatching_inst_0)&&(~reservation_valid(print_rs)||~(print_next_is_src_0|print_next_is_src_1)) ? 6 : 0) : 0; 
 
      wire is_print_wire = is_print(dispatching_inst_0);
+     wire is_print_wire1 = is_print(dispatching_inst_1);
 
 
     //Decide which instructions we should be dispatching
@@ -483,6 +484,7 @@ module main();
                              dispatch_destination_1 == 6 ? rs_entry_1 : 0;
 
     wire [31:0]print_inst = print_entry[31:0];
+    wire is_cp = is_char_print(print_inst);
     //Look on the cdb to see if any of our sources are writing
     wire [16:0] print_src_0_on_cdb = (waiting_on_0(print_entry) == 1) ? cdb_1 :
                                      (waiting_on_0(print_entry) == 2) ? cdb_2 :
@@ -500,7 +502,8 @@ module main();
     wire print_next_is_src_0 = (is_rs_src_or_data_0(print_entry)&&~print_src_0_on_cdb[16]);
     wire print_next_is_src_1 = (is_rs_src_or_data_1(print_entry)&&~print_src_1_on_cdb[16]);
     //the 17 bits data wires are 1 valid bit and 16 data bits
-    wire [16:0]print_data = ~(is_rs_src_or_data_0(print_entry) || is_rs_src_or_data_1(print_entry))&&reservation_valid(print_entry) ? ((1<<16) | waiting_on_0(print_entry)) : print_src_0_on_cdb;
+    wire [16:0]print_data =  (is_char_print(print_inst)) ? ((1<<16) | print_inst[31:16])  :
+                             ~(is_rs_src_or_data_0(print_entry) || is_rs_src_or_data_1(print_entry))&&reservation_valid(print_entry) ? ((1<<16) | waiting_on_0(print_entry)) : print_src_0_on_cdb;
 
     /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     |	     Done executing units		    | 
@@ -894,9 +897,13 @@ module main();
 	|	     Start printing print inst		|
 	~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
-	if(cdb_6[16]) begin
-               $display("%d",cdb_6[15:0]);
+	if(cdb_6[16] & (cdb_6[15:12] == 12)) begin
+               $display("%c",cdb_6[15:0]);
 	end
+    if(cdb_6[16] & ~(cdb_6[15:12] == 12)) begin
+               $display("%d",cdb_6[15:0]);
+    end
+    
 
 	/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	|	     Done printing print inst		|
@@ -1028,7 +1035,13 @@ module main();
     //Tell if an instruction is a print
     function is_print;
 	input[31:0]IBq_data;
-	is_print = IBq_data[31:28] == 8;
+	is_print = IBq_data[31:28] == 8 || IBq_data[31:28] == 12;
+    endfunction
+
+    //Tell if an instruction is a print
+    function is_char_print;
+        input[31:0]IBq_data;
+        is_char_print = IBq_data[31:28] == 12;
     endfunction
 
     function is_jlt;
