@@ -137,6 +137,15 @@ void genprint(int reg)
     fputs(asmout, fout);
 }
 
+void genprintc(int num)
+{
+    char asmout[100];
+    sprintf(asmout, "\tprintc \t%d\t\t\t//print constant %d\n", num, num);
+    if(DEBUG)
+        printf("%s", asmout);
+    fputs(asmout, fout);
+}
+
 /* gena a halt */
 void genhalt()
 {

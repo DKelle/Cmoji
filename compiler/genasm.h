@@ -19,6 +19,9 @@ void genlabel(int label);
 /*gen a print */
 void genprint(int reg);
 
+/*gen a print num */
+void genprintc(int num);
+
 /* gen a halt */
 void genhalt();
 

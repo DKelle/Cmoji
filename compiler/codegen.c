@@ -171,9 +171,34 @@ void genoperator(TOKEN code)
             break;
         case PRINTOP - OPERATOR_BIAS:
             op = code->operands;
-            reg = genarith(op, -1);
-            genprint(reg);
-            openreg(reg);
+            //We are either printing a variable, or a constant (number or string)
+            int type = code->operands->tokentype;
+            switch(type)
+            {
+                case IDENTIFIERTOK:
+                    op = code->operands;
+                    //We have an identifer. Are we printing a variable or a string?
+                    reg = genarith(op, -1);
+                    genprint(reg);
+                    openreg(reg);
+                    break;
+                case NUMBERTOK:
+                    //We need to break each character into a different printtok
+                    op = code->operands;
+                    int num = op->whichval;
+                    char str[16];
+                    sprintf(str, "%d", num);
+                    printf("str value is %s\n", str);
+                    for(int i = 0; i < strlen(str); i++)
+                    {
+                        char *c = str+i;
+                        printf("the char is %c\n", str[i]);
+                        int printval = str[i];
+                        genprintc(printval);
+                    }
+                    break;
+
+            }
             break;
         case LABELOP - OPERATOR_BIAS:
             op = code->operands;
