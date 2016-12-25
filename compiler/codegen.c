@@ -202,6 +202,14 @@ void genoperator(TOKEN code)
                     }
                     break;
 
+            } 
+
+            //We also need to check if there is a newline character after our print
+            if(op->link != NULL)
+            {
+                //To create a newline, just generate an empty print statement
+                int temp = 4095;
+                genprintc(temp);
             }
             break;
         case LABELOP - OPERATOR_BIAS:
