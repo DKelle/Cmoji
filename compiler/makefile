@@ -50,17 +50,17 @@ pars1y: pars1.tab.o lex.yy.o printtoken.o pprint.o symtab.o
 parser: y.tab.o lex.yy.o printtoken.o pprint.o 
 	cc -o parser y.tab.o lex.yy.o printtoken.o pprint.o  -ll
 
+# To compile your file codegen.c --> compiler
+#      using your files lexan.l and parse.y
+compiler: y.tab.o lex.yy.o printtoken.o pprint.o codegen.o genasm.o 
+	cc -o compiler y.tab.o lex.yy.o printtoken.o pprint.o  \
+			 codegen.o genasm.o
+
 # To compile starter file codgen.c --> comp1y
 #      using your files lexan.l and parse.y
 comp1y: y.tab.o lex.yy.o printtoken.o pprint.o symtab.o codgen.o genasm.o
 	cc -o comp1y y.tab.o lex.yy.o printtoken.o pprint.o symtab.o codgen.o \
             genasm.o
-
-# To compile your file codegen.c --> compiler
-#      using your files lexan.l and parse.y
-compiler: y.tab.o lex.yy.o printtoken.o pprint.o codegen.o genasm.o 
-	cc -o compiler y.tab.o lex.yy.o printtoken.o pprint.o  \
-             codegen.o genasm.o
 
 # To compile starter file codgen.c --> comp1c
 #      using your files lexanc.c and parsc.c

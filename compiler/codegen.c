@@ -175,6 +175,12 @@ void genoperator(TOKEN code)
             int type = code->operands->tokentype;
             switch(type)
             {
+                case RESERVED:
+                    //We are going to use FFF to represent a newline character
+                    op = code->operands;
+                    int temp = 4095;
+                    genprintc(temp);
+                    break;
                 case IDENTIFIERTOK:
                     op = code->operands;
                     //We have an identifer. Are we printing a variable or a string?
@@ -188,11 +194,9 @@ void genoperator(TOKEN code)
                     int num = op->whichval;
                     char str[16];
                     sprintf(str, "%d", num);
-                    printf("str value is %s\n", str);
                     for(int i = 0; i < strlen(str); i++)
                     {
                         char *c = str+i;
-                        printf("the char is %c\n", str[i]);
                         int printval = str[i];
                         genprintc(printval);
                     }

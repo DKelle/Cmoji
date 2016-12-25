@@ -88,7 +88,8 @@ else		{return(maketoken(RESERVED,ELSE));}
 ret		    {return(maketoken(RESERVED,RET));}
 sleep		{return(maketoken(RESERVED,SLEEP));}
 function    {return(maketoken(RESERVED,FUNCTION));}
-halt       {return(maketoken(RESERVED,HALT));}
+halt        {return(maketoken(RESERVED,HALT));}
+newline		{return(maketoken(RESERVED,NEWLINE));}
 
 "+"       	{return(maketoken(OPERATOR, PLUSOP));}
 "-"       	{return(maketoken(OPERATOR, MINUSOP));}

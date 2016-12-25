@@ -897,11 +897,14 @@ module main();
 	|	     Start printing print inst		|
 	~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
-	if(cdb_6[16] & (cdb_6[15:12] == 12)) begin
-               $display("%c",cdb_6[15:0]);
+	if(cdb_6[16] & (cdb_6[15:12] == 12) && ~(cdb_6[11:0] == 4095)) begin
+               $write("%c",cdb_6[15:0]);
 	end
+    if(cdb_6[16] & (cdb_6[15:12] == 12) && (cdb_6[11:0] == 4095)) begin
+               $display("");
+    end
     if(cdb_6[16] & ~(cdb_6[15:12] == 12)) begin
-               $display("%d",cdb_6[15:0]);
+               $write("%d",cdb_6[15:0]);
     end
     
 
@@ -951,6 +954,10 @@ module main();
                $display("#15:%x",reg_file[15][15:0]);
 	end
  */	
+    if(halt) begin
+        $display("");
+         
+    end
 	/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	|	     Done updating registers		|
 	~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/

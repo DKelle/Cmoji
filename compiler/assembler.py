@@ -124,8 +124,6 @@ def main():
     #replace the name of the instructions with their correspoding bits
     insts = replace_operator(insts, labels, inst_to_bit)
 
-    print insts
-    print comments
     #append the comments back onto the asm to make it more readable
     insts = [x + " //" + comments[i].rstrip() for i,x in enumerate(insts)]
 

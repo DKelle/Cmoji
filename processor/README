@@ -17,10 +17,10 @@
                                     else pc += 1;
 8   1000aaaabbbbcccc print a	    print regs[a]; pc += 1;
 				                    (a == b == c. This makes implementation easier)
-
+12  1100iiiiiiiiiiii print i  	    print character i in ascii; pc += 1;
 
 - to Run
- Move txt file of memory to mem.hex
+ Name memory file a.hex, and store in the /processor/ dir
  Run ./cpu
 
 ~~~~~ known bug ~~~~~~

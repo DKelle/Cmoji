@@ -60,8 +60,8 @@ The current mapping of Emoji -> keywords is as follows
 🗣 //funcall
 ≝ //def
 👬 //=
-🌜 //(
-🌛 //)
+🌜 //( or {
+🌛 //) or }
 🤔 //if
 🙄 //elif
 😳 //else
@@ -69,9 +69,9 @@ The current mapping of Emoji -> keywords is as follows
 👇 //<
 🔙 //ret
 💤 //sleep
+🔚 //newline character
 
 All other emojis encountered will be compiled as variable names
-
 
 The Emoji-86 instruction set for the virtual processor is as follows:
  encoding          instruction   description

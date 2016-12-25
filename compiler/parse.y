@@ -65,12 +65,12 @@ TOKEN parseresult;
 
 %token PLUSOP MINUSOP TIMESOP DIVIDEOP                      /* operators */
 %token EQOP LTOP LEOP GEOP GTOP IFOP ELIFOP ELSEOP NEOP ANDOP OROP NOTOP
-%token GOTOOP LABELOP STATEMENTOP SLEEPOP PRINTOP HALTOP
+%token GOTOOP LABELOP STATEMENTOP SLEEPOP PRINTOP HALTOP NEWLINEOP
 
 %token LPAREN RPAREN                                        /* Delimiters */
 
 %token LOOP LOOP1 TO PRINT SILENCE FUNCALL                  /* Resereved */
-%token DEF IF ELIF ELSE RET SLEEP FUNCTION HALT
+%token DEF IF ELIF ELSE RET SLEEP FUNCTION HALT NEWLINE
 
 %%
 program : statement_list   {parseresult = $1;}		
@@ -150,6 +150,7 @@ factor  : NUMBERTOK                 { $$ = $1; }
         ;
 
 print   : PRINT expression  {$$ = makeprint($1, $2); }
+        | PRINT NEWLINE     {$$ = makeprint($1, $2); }
         ;
 
 halt    : HALT              { $$ = makehalt($1); }
@@ -213,6 +214,11 @@ TOKEN makeprint(TOKEN print, TOKEN operands)
 	print->tokentype = OPERATOR;
 	print->whichval = PRINTOP - OPERATOR_BIAS;
 	print->operands = operands;
+    if(operands->whichval == NEWLINE - RESERVED_BIAS)
+    {
+        operands->whichval = NEWLINEOP - OPERATOR_BIAS;
+        dbugprinttok(operands);
+    }
 	return print;
 }
 
@@ -554,7 +560,7 @@ int main()
         dbugprinttok(parseresult);
         ppexpr(parseresult);           /* Pretty-print the result tree */
     }   
-//    ppexpr(parseresult);           /* Pretty-print the result tree */
+    ppexpr(parseresult);           /* Pretty-print the result tree */
     gencode(parseresult, labelnumber, (DEBUG > 0));
     return 0;
 }

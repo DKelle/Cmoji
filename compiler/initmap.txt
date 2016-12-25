@@ -33,3 +33,4 @@
 🔙 //ret
 💤 //sleep
 💀 //halt
+🔚 //newline
