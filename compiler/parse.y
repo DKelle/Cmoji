@@ -560,7 +560,7 @@ int main()
         dbugprinttok(parseresult);
         ppexpr(parseresult);           /* Pretty-print the result tree */
     }   
-    ppexpr(parseresult);           /* Pretty-print the result tree */
+//    ppexpr(parseresult);           /* Pretty-print the result tree */
     gencode(parseresult, labelnumber, (DEBUG > 0));
     return 0;
 }
