@@ -1,74 +1,85 @@
-program	: statement_list HALT
-		;
+program : statement_list
+        ;
 
-statement_list	: statement statement_list
-				| statement
-				;
+statement   : if
+            | assignment
+            | funcall
+            | loop
+            | print
+            | halt
+            ;
 
-statement 	: declaration
-			| if
-			| assignment
-			| funcall
-			| loop
-			;
+statement_list  : statement statement_list
+                | statement
+                ;
 
-declaration : DEF var
-			| DEF assignment
-			;
+if          : IF comparator LPAREN statement_list RPAREN
+            | IF comparator LPAREN statement_list RPAREN elif
+            ;
 
-if			: IF expression LPAREN statement_list RPAREN
-			| IF expression LPAREN statement_list RPAREN elif
-			;
+assignment  : var EQOP expression
+            ;
 
-assignment	: var EQ expression
-			;
+funcall     : FUNCALL IDENTIFIERTOK
+            ;
 
-funcall		: CALL IDENTIFIER
-			;
+loop        : LOOP comparator LPAREN statement_list RPAREN
+            | LOOP range LPAREN statement_list RPAREN
+            | LOOP1 LPAREN statement_list RPAREN
+            ;
 
-loop		: LOOP expression LPAREN statement_list RPAREN
-			| LOOP range LPAREN statement_list RPAREN
-			| LOOP1 LPAREN statement_list RPAREN
-			;
+var         : IDENTIFIERTOK
+            ;
 
-var 		: IDENTIFIER
-			;
+expression  : expression compare_op simple_expression
+            | simple_expression
+            ;
 
-expression 	: expression compare_op simple_expression
-			| simple_expression
-			;
+comparator  : expression compare_op simple_expression
+            ;
 
-elif		: ELIF expression LPAREN statement_list RPAREN
-			| ELIF expression LPAREN statement_list RPAREN else
-			;
+elif        : ELIF expression LPAREN statement_list RPAREN
+            | ELIF expression LPAREN statement_list RPAREN elif
+            | ELIF expression LPAREN statement_list RPAREN else
+            ;
 
-range		: number POINT number
-			;
+range       : number TO number
+            ;
 
-compare_op 	: EQ | LT | LE | GT | GE
-			;
+compare_op  : LTOP | LEOP | GTOP | GEOP | EQOP
+            ;
 
-simple_expression	: term
-					| simple_expression add_op term
-					;
+simple_expression   : term
+                    | simple_expression add_op term
+                    ;
 
-else 	: ELSE LPAREN statement_list RPAREN
-		;
+else    : ELSE LPAREN statement_list RPAREN
+        ;
 
-number	: var
-		| NUMBER
+number  : var
+        | NUMBERTOK
 
-term 	: term times_op factor
-		| factor
-		;
+term    : term times_op factor
+        | factor
+        ;
 
-add_op 	: PLUS | MINUS | OR
-		;
+add_op  : PLUSOP | MINUSOP | OROP
+        ;
 
-times_op 	: MUL | DIV | AND
-			;
+times_op    : TIMESOP | DIVIDEOP | ANDOP
+            ;
 
-factor	: NUMBER
-		| var
-		| LPAREN expression RPAREN
-		;
+factor  : NUMBERTOK
+        | var
+        | LPAREN expression RPAREN
+        ;
+
+print   : PRINT printexpr
+        ;
+
+printexpr : expression
+          | expression NEWLINE
+          | NEWLINE
+          ;
+
+halt    : HALT

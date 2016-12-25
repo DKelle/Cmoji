@@ -149,9 +149,13 @@ factor  : NUMBERTOK                 { $$ = $1; }
         | LPAREN expression RPAREN  { $$ = $2; }
         ;
 
-print   : PRINT expression  {$$ = makeprint($1, $2); }
-        | PRINT NEWLINE     {$$ = makeprint($1, $2); }
+print   : PRINT printexpr  {$$ = makeprint($1, $2); }
         ;
+
+printexpr : expression          {$$ = $1;}
+          | expression NEWLINE  {$$ = cons($1, $2); }
+          | NEWLINE             {$$ = $1;}
+          ;
 
 halt    : HALT              { $$ = makehalt($1); }
 
@@ -217,7 +221,11 @@ TOKEN makeprint(TOKEN print, TOKEN operands)
     if(operands->whichval == NEWLINE - RESERVED_BIAS)
     {
         operands->whichval = NEWLINEOP - OPERATOR_BIAS;
-        dbugprinttok(operands);
+    }
+    else if(operands->link != NULL)
+    {
+        //The line we are printing ends with a new line character. 
+        operands->link->whichval = NEWLINEOP - OPERATOR_BIAS;
     }
 	return print;
 }
