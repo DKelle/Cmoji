@@ -41,6 +41,7 @@ comparator  : expression compare_op simple_expression
 elif        : ELIF expression LPAREN statement_list RPAREN
             | ELIF expression LPAREN statement_list RPAREN elif
             | ELIF expression LPAREN statement_list RPAREN else
+            | else
             ;
 
 range       : number TO number

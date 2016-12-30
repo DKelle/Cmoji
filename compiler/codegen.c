@@ -159,7 +159,10 @@ void genoperator(TOKEN code)
             genjump(iflabel2);
             genlabel(iflabel);
             if(el)
+            {
+                printf("inside the if\n"); 
                 genc(el);
+            }
             genlabel(iflabel2);
             break;
         case ELSEOP - OPERATOR_BIAS:
