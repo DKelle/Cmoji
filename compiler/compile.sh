@@ -1,5 +1,5 @@
 javac preprocessor.java
-java preprocessor < cmj/prog.cmj 
+java preprocessor < ../examples/prog.cmj 
 make compiler
 ./compiler < preprocessed.txt
 python assembler.py

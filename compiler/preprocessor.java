@@ -30,6 +30,7 @@ public class preprocessor
                 if((inputStr=bufReader.readLine()) != null) 
                 {
                     inputStr = inputStr.replaceAll("\\s+", "");
+                    inputStr = inputStr.split("#")[0];
                     String escapedStr = escapeUnicode(inputStr);
                     int i = 0;
                     int substringLen = 5;

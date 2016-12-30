@@ -38,6 +38,7 @@ Weaknesses of this language:
 
 The current mapping of Emoji -> keywords is as follows
 
+# //Comment
 🔁 //loop
 🔂 //loop1
 0️⃣ //0
@@ -56,9 +57,6 @@ The current mapping of Emoji -> keywords is as follows
 👎 //-
 🖖 ///
 🖨 //print
-🤐 //silence
-🗣 //funcall
-≝ //def
 👬 //=
 🌜 //( or {
 🌛 //) or }
@@ -67,23 +65,28 @@ The current mapping of Emoji -> keywords is as follows
 😳 //else
 👆 //>
 👇 //<
-🔙 //ret
-💤 //sleep
 🔚 //newline character
+
+This language supports comments. Use the # symbol to begin a comment. Everything following the # will be ignored by the compiler
 
 All other emojis encountered will be compiled as variable names
 
 The Emoji-86 instruction set for the virtual processor is as follows:
  encoding          instruction   description
 
- 0000iiiiiiiitttt  mov i,t       regs[t] = i; pc += 1;
- 0001aaaabbbbtttt  add a,b,t     regs[t] = regs[a] + regs[b]; pc += 1;
- 0010jjjjjjjjjjjj  jmp j         pc = j;
- 0011000000000000  halt          <stop fetching instructions>
- 0100iiiiiiiitttt  ld i,t        regs[t] = mem[i]; pc += 1;
- 0101aaaabbbbtttt  ldr a,b,t     regs[t] = mem[regs[a]+regs[b]]; pc += 1;
- 0110aaaabbbbtttt  jeq a,b,t     if (regs[a] == regs[b]) pc += d
-                                 else pc += 1;
- 1000aaaabbbbcccc print a        print regs[a]; pc += 1;
-                                 (a == b == c. This makes implementation easier)
-
+0   0000iiiiiiiitttt  mov i,t       regs[t] = i; pc += 1;
+1   0001aaaabbbbtttt  add a,b,t     regs[t] = regs[a] + regs[b]; pc += 1;
+7   0111aaaabbbbtttt  sub a,b,t     regs[t] = regs[a] - regs[b]; pc += 1;
+9   1001aaaabbbbtttt  mul a,b,t     regs[t] = regs[a] * regs[b]; pc += 1;
+10  1010aaaabbbbtttt  div a,b,t     regs[t] = regs[a] / regs[b]; pc += 1;
+2   0010jjjjjjjjjjjj  jmp j         pc = j;
+3   0011000000000000  halt          <stop fetching instructions>
+4   0100iiiiiiiitttt  ld i,t        regs[t] = mem[i]; pc += 1;
+5   0101aaaabbbbtttt  ldr a,b,t     regs[t] = mem[regs[a]+regs[b]]; pc += 1;
+6   0110aaaabbbbtttt  jeq a,b,t     if (regs[a] == regs[b]) pc += d
+                                    else pc += 1;
+11  1011aaaabbbbtttt  jlt           if(regs[a] < regs[b]) pc += t
+                                    else pc += 1;
+8   1000aaaabbbbcccc print a	    print regs[a]; pc += 1;
+				                    (a == b == c. This makes implementation easier)
+12  1100iiiiiiiiiiii print i  	    print character i in ascii; pc += 1;
