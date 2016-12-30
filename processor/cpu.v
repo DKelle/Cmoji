@@ -174,7 +174,7 @@ module main();
 
 
     //After we have found the correct instruction, decide where it needs to be dispatched 
-    wire [2:0]dispatch_destination_1 = (branch_rs_open || print_rs_open) ?                                                                                   
+    wire [2:0]dispatch_destination_1 = (branch_rs_open) ?                                                                                   
            ((is_ld(dispatching_inst_1)||is_ldr(dispatching_inst_1))&&~(dispatch_destination_0==1)
    	   &&(~reservation_valid(ld_rs_0)||~(ldu_0_next_is_src_0|ldu_0_next_is_src_1)&&~ldu_0_is_loading) ? 1 :  
            (is_ld(dispatching_inst_1)||is_ldr(dispatching_inst_1))&&~(dispatch_destination_0==2)
