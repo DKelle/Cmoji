@@ -89,8 +89,8 @@ void genif(TOKEN operator, int lhs, int rhs, int label)
             sprintf(asmout2, "\tjeq\treg%d\treg%d\tLABEL%d\t//\"\t\t\t\t\"\n",lhs,rhs,label);
             break;
         case EQOP - OPERATOR_BIAS:
-            sprintf(asmout, "\tjle\treg%d\treg%d\tLABEL%d\t//if reg%d != reg%d jmp LABEL%d\n",lhs,rhs,label,lhs,rhs,label);
-            sprintf(asmout2, "\tjle\treg%d\treg%d\tLABEL%d\t//\"\t\t\t\t\"\n",rhs,lhs,label);
+            sprintf(asmout, "\tjlt\treg%d\treg%d\tLABEL%d\t//if reg%d != reg%d jmp LABEL%d\n",lhs,rhs,label,lhs,rhs,label);
+            sprintf(asmout2, "\tjlt\treg%d\treg%d\tLABEL%d\t//\"\t\t\t\t\"\n",rhs,lhs,label);
             break;
     }
 
