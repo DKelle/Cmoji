@@ -116,6 +116,7 @@ comparator  : expression compare_op simple_expression   { $$ = binop($2,$1,$3); 
 elif        : ELIF expression LPAREN statement_list RPAREN      { $$ = makeelif($1, $2, $4, NULL); }
             | ELIF expression LPAREN statement_list RPAREN elif { $$ = makeelif($1, $2, $4, $6); }
             | ELIF expression LPAREN statement_list RPAREN else { $$ = makeelif($1, $2, $4, $6); }
+            | else                                              { $$ = $1;  }
             ;
 
 range       : number TO number  { $$ = cons($1, $3); }
@@ -568,7 +569,7 @@ int main()
         dbugprinttok(parseresult);
         ppexpr(parseresult);           /* Pretty-print the result tree */
     }   
-//    ppexpr(parseresult);           /* Pretty-print the result tree */
+    ppexpr(parseresult);           /* Pretty-print the result tree */
     gencode(parseresult, labelnumber, (DEBUG > 0));
     return 0;
 }
