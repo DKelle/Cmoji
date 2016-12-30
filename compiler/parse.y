@@ -294,8 +294,8 @@ TOKEN makeloopone(TOKEN tok, TOKEN statements)
 {
     //Create the 1 -> 3 range
     TOKEN one = makenumbertok(1);
-    TOKEN two = makenumbertok(2);
-    TOKEN range = cons(one,two);
+    TOKEN three = makenumbertok(3);
+    TOKEN range = cons(one,three);
 
     //create a rangeloop with the new range, and the statements we were passed
     TOKEN loop = makerangeloop(tok, range, copytok(tok), statements);
