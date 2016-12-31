@@ -148,22 +148,35 @@ void genoperator(TOKEN code)
             reg2 = genarith(rhs, -1);
             //This will flip the condition of the if, and generate and jlt instruction
             int iflabel = getlabel(); 
+            int iflabel2 = getlabel();
+            int iflabel3 = getlabel();
+            int iflabel4 = getlabel();
+
             genif(op, reg, reg2, iflabel); //This will say 'if not condition, jump'
+
+            //The logic is kind of convoluted here
+            //Because relative jumps can only jump a distance of 15 max,
+            //we are going to use a relative jmp to jump to an absoulte jump, which has a max distance of 4095
+            //this way, if the inside of the 'if' statment is more than 15 lines, we don't run into bugs
+            genjump(iflabel2);
+            genlabel(iflabel);
+            genjump(iflabel3);
+            genlabel(iflabel2);
+
             openreg(reg);
             openreg(reg2);
             TOKEN then = op->link;
             genc(then); //generate the 'then part' of the if
-            int iflabel2 = getlabel();
+            genjump(iflabel4);
+
+            genlabel(iflabel3);
             //gen the 'elif' or 'else' if there is one 
             TOKEN el = then->link;
-            genjump(iflabel2);
-            genlabel(iflabel);
             if(el)
             {
-                printf("inside the if\n"); 
                 genc(el);
             }
-            genlabel(iflabel2);
+            genlabel(iflabel4);
             break;
         case ELSEOP - OPERATOR_BIAS:
             //If we are genearting an else, then we have already gen'd an if
