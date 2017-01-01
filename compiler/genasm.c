@@ -57,6 +57,9 @@ void genmath(int operator, int lhs, int rhs, int dest)
         case DIVIDEOP - OPERATOR_BIAS:
             symbol = '/';
             inst = "div";
+        case MODOP - OPERATOR_BIAS:
+            symbol = '%';
+            inst = "mod";
             break;
     }
     

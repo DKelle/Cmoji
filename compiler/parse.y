@@ -63,7 +63,7 @@ TOKEN parseresult;
 
 %token OPERATOR DELIMETER RESERVED IDENTIFIERTOK NUMBERTOK  /* token types */
 
-%token PLUSOP MINUSOP TIMESOP DIVIDEOP                      /* operators */
+%token PLUSOP MINUSOP TIMESOP DIVIDEOP MODOP                     /* operators */
 %token EQOP LTOP LEOP GEOP GTOP IFOP ELIFOP ELSEOP NEOP ANDOP OROP NOTOP
 %token GOTOOP LABELOP STATEMENTOP SLEEPOP PRINTOP HALTOP NEWLINEOP
 
@@ -142,7 +142,7 @@ term    : term times_op factor  {$$ = binop($2,$1,$3);}
 add_op  : PLUSOP | MINUSOP | OROP
         ;
 
-times_op    : TIMESOP | DIVIDEOP | ANDOP
+times_op    : TIMESOP | DIVIDEOP | MODOP | ANDOP 
             ;
 
 factor  : NUMBERTOK                 { $$ = $1; }
@@ -421,6 +421,8 @@ TOKEN binop(TOKEN op, TOKEN lhs, TOKEN rhs)        /* reduce binary operator */
                 break;
             case DIVIDEOP - OPERATOR_BIAS:
                 return makenumbertok(lhs->whichval / rhs->whichval);
+            case MODOP - OPERATOR_BIAS:
+                return makenumbertok(lhs->whichval % rhs->whichval);
                 break;
         }
     }

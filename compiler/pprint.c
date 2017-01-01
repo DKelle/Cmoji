@@ -33,10 +33,10 @@
 #include "lexan.h"
 
 #define PRINTEXPRDEBUG 0     /* Set to 1 to print each node in printexpr */
-char* opprint[]  = {" ", "+", "-", "*", "/", "=", "<", "<=", ">=", ">",
+char* opprint[]  = {" ", "+", "-", "*", "/", "%", "=", "<", "<=", ">=", ">",
                    "if", "elif", "else", "!=", "and", "or", "not", "goto", "label", 
                    "statement", "sleep", "print", "halt", "newline"};
-int opsize[] = {1,1,1,1,1,1,1,2,2,1,2,4,4,2,3,2,3,4,5,9,5,5,4,7};
+int opsize[] = {1,1,1,1,1,1,1,1,2,2,1,2,4,4,2,3,2,3,4,5,9,5,5,4,7};
 
 void debugprinttok(TOKEN tok)           /* print a token for debugging */
   { if (tok == NULL)

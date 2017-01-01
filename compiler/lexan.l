@@ -100,6 +100,7 @@ newline		{return(maketoken(RESERVED,NEWLINE));}
 "="       	{return(maketoken(OPERATOR, EQOP));}
 ">"       	{return(maketoken(OPERATOR, GTOP));}
 "> ="     	{return(maketoken(OPERATOR, GEOP));}
+mod       	{return(maketoken(OPERATOR, MODOP));}
 and         {return(maketoken(OPERATOR, ANDOP));}
 not         {return(maketoken(OPERATOR, NOTOP));}
 or          {return(maketoken(OPERATOR, OROP));}
@@ -175,6 +176,7 @@ int maketoken(int type, int which)
     }
     else if (type == OPERATOR)
     {
+        //printf("FOUND operator %d\n", which);
 	    yylval->whichval = which - OPERATOR_BIAS;
     }
     else if (type == DELIMITER)

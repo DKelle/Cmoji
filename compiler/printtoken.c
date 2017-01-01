@@ -29,7 +29,7 @@
    modify them as you see fit. */
 
 
-static char* opprnt[]  = {" ", "+", "-", "*", "/", "=", "<", "<=",
+static char* opprnt[]  = {" ", "+", "-", "*", "/", "%", "=", "<", "<=",
                               ">=", ">", "if", "elif", "else", "and", "or", "not", "goto", 
                               "label", "statement", "sleep", "print", "halt"};
 
