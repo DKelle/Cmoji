@@ -28,6 +28,7 @@ def create_bit_map(insts):
     bit_map["div"] = 'a'
     bit_map["jlt"] = 'b'
     bit_map["printc"] = 'c'
+    bit_map["mod"] = 'd'
     return bit_map
 
 def replace_operands(insts, labels):
@@ -137,7 +138,7 @@ def convert_to_hex(num):
     return str(hex(num).split('x')[1])
 
 def has_three_operands(inst):
-    three_operands = "add sub mul div ldr jeq jlt"
+    three_operands = "add sub mul div ldr jeq jlt mod"
     return inst in three_operands
 
 def has_two_operands(inst):

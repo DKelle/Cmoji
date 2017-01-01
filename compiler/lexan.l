@@ -100,7 +100,7 @@ newline		{return(maketoken(RESERVED,NEWLINE));}
 "="       	{return(maketoken(OPERATOR, EQOP));}
 ">"       	{return(maketoken(OPERATOR, GTOP));}
 "> ="     	{return(maketoken(OPERATOR, GEOP));}
-mod       	{return(maketoken(OPERATOR, MODOP));}
+"%"       	{return(maketoken(OPERATOR, MODOP));}
 and         {return(maketoken(OPERATOR, ANDOP));}
 not         {return(maketoken(OPERATOR, NOTOP));}
 or          {return(maketoken(OPERATOR, OROP));}

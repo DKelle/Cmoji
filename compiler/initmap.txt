@@ -15,10 +15,10 @@
 👍 //+
 👎 //-
 🖖 ///
+👌 //%
 ⚡️ //not
 🤘 //or
 💪 //and
-👌 //mod
 🖨 //print
 🤐 //silence
 🗣 //funcall

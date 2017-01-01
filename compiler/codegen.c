@@ -274,7 +274,7 @@ int genarith(TOKEN code, int dest)
         case OPERATOR:
             if(DEBUGGEN & DB_ARITH)
                 printf("genarith found an operator\n");
-            //This is either a +, -, *, or /. Generate both LHS and RHS
+            //This is either a +, -, *, or /, %. Generate both LHS and RHS
             //then do the operation into dest 
             
             lhs = code->operands;
